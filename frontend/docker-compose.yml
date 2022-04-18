@@ -1,0 +1,8 @@
+version: "3"
+
+services:
+  bogos-frontend:
+    image: "bogos-frontend"
+    build: .
+    ports:
+      - "3000:3000"
