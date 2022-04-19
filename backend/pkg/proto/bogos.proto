@@ -1,0 +1,17 @@
+syntax = "proto3";
+package bogos;
+
+option go_package = "github.com/fogo-sh/bogos/backend/pkg/proto";
+
+service UserService {
+  rpc GetJwt (GetJwtRequest) returns (GetJwtReply) {}
+}
+
+message GetJwtRequest {
+  string username = 1;
+  string password = 2;
+}
+
+message GetJwtReply {
+  string jwt = 1;
+}
