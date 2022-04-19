@@ -23,14 +23,14 @@ export const meta: MetaFunction = () => {
 
 function Document({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className="h-full">
+    <html lang="en">
       <head>
         <meta charSet="utf-8" />
         <meta name="viewport" content="width=device-width,initial-scale=1" />
         <Meta />
         <Links />
       </head>
-      <body className="bg-slate-900 p-4 h-full">
+      <body className="bg-stone-900 p-10">
         {children}
         <ScrollRestoration />
         <Scripts />
