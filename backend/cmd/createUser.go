@@ -5,6 +5,7 @@ import (
 	"database/sql"
 	"fmt"
 
+	"github.com/AlecAivazis/survey/v2"
 	_ "github.com/lib/pq"
 	"github.com/spf13/cobra"
 	"golang.org/x/crypto/bcrypt"
@@ -25,7 +26,26 @@ var createUserCmd = &cobra.Command{
 			return fmt.Errorf("error connecting to db: %w", err)
 		}
 
-		hash, err := bcrypt.GenerateFromPassword([]byte("test"), bcrypt.DefaultCost)
+		answers := struct {
+			Username string
+			Password string
+		}{}
+
+		err = survey.Ask([]*survey.Question{
+			{
+				Name:   "Username",
+				Prompt: &survey.Input{Message: "Username:"},
+			},
+			{
+				Name:   "Password",
+				Prompt: &survey.Password{Message: "Password:"},
+			},
+		}, &answers)
+		if err != nil {
+			return fmt.Errorf("error getting input values: %w", err)
+		}
+
+		hash, err := bcrypt.GenerateFromPassword([]byte(answers.Password), bcrypt.DefaultCost)
 		if err != nil {
 			return fmt.Errorf("error hashing password: %w", err)
 		}
@@ -33,7 +53,7 @@ var createUserCmd = &cobra.Command{
 		queries := database.New(db)
 
 		userId, err := queries.CreateUser(ctx, database.CreateUserParams{
-			Username:     "test",
+			Username:     answers.Username,
 			PasswordHash: hash,
 		})
 		if err != nil {
