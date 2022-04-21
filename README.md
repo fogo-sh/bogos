@@ -6,7 +6,7 @@ _work in progress_
 
 ## Setup (development)
 
-- Install [kind](https://kind.sigs.k8s.io/docs/user/quick-start#installation), [ctlptl](https://github.com/tilt-dev/ctlptl#how-do-i-install-it), [golang-migrate](https://github.com/golang-migrate/migrate/tree/master/cmd/migrate), and [tilt](https://docs.tilt.dev/#get-tilt)
+- Install [kind](https://kind.sigs.k8s.io/docs/user/quick-start#installation), [kubectl](https://kubernetes.io/docs/tasks/tools/#kubectl), [helm](https://helm.sh/docs/intro/install/), [ctlptl](https://github.com/tilt-dev/ctlptl#how-do-i-install-it), [golang-migrate](https://github.com/golang-migrate/migrate/tree/master/cmd/migrate), and [tilt](https://docs.tilt.dev/#get-tilt)
 - Create a new `kind` cluster
   - `ctlptl create cluster kind --registry=ctlptl-registry`
 - Start up everything
