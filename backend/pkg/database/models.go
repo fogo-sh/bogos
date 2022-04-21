@@ -6,10 +6,38 @@ package database
 
 import (
 	"database/sql"
+	"time"
 )
 
-type Author struct {
-	ID   int64
-	Name string
-	Bio  sql.NullString
+type Outing struct {
+	ID        int32
+	Title     string
+	Date      time.Time
+	CreatedAt time.Time
+	UpdatedAt sql.NullTime
+}
+
+type OutingUser struct {
+	OutingID int32
+	UserID   int32
+}
+
+type Photo struct {
+	ID        int32
+	Path      string
+	Title     sql.NullString
+	CreatedAt time.Time
+	UpdatedAt sql.NullTime
+	CreatorID int32
+	OutingID  int32
+}
+
+type User struct {
+	ID           int32
+	Username     string
+	PasswordHash []byte
+	DisplayName  sql.NullString
+	AvatarUrl    sql.NullString
+	CreatedAt    time.Time
+	UpdatedAt    sql.NullTime
 }

@@ -5,7 +5,15 @@ db_username = "bogos"
 db_password = "bogos-binted"
 db_name = "bogos"
 
-db_connection_url = "postgresql://" + db_username + ":" + db_password + "@localhost/" + db_name + "?sslmode=disable"
+db_connection_url = (
+    "postgresql://"
+    + db_username
+    + ":"
+    + db_password
+    + "@localhost/"
+    + db_name
+    + "?sslmode=disable"
+)
 
 helm_remote(
     "postgresql",
@@ -26,7 +34,7 @@ cmd_button(
         db_connection_url,
         "-path",
         "backend/pkg/database/migrations",
-        "up"
+        "up",
     ],
     resource="postgresql",
     icon_name="upgrade",
