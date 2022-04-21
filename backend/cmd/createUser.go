@@ -24,7 +24,7 @@ var createUserCmd = &cobra.Command{
 			return err
 		}
 
-		queries, err := database.Connect(cfg.DBConnectionString)
+		queries, err := database.Connect(cfg)
 		if err != nil {
 			return fmt.Errorf("error connecting to db: %w", err)
 		}

@@ -2,10 +2,12 @@ package database
 
 import (
 	"database/sql"
+
+	"github.com/fogo-sh/bogos/backend/pkg/config"
 )
 
-func Connect(connectionString string) (*Queries, error) {
-	db, err := sql.Open("postgres", connectionString)
+func Connect(config *config.Config) (*Queries, error) {
+	db, err := sql.Open("postgres", config.DBConnectionString)
 	if err != nil {
 		return nil, err
 	}
