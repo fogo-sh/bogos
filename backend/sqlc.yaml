@@ -1,0 +1,7 @@
+version: 1
+packages:
+  - path: "pkg/database"
+    name: "database"
+    engine: "postgresql"
+    schema: "pkg/database/migrations"
+    queries: "pkg/database/queries"

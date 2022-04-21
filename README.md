@@ -6,8 +6,9 @@ _work in progress_
 
 ## Setup (development)
 
-- Install [kind](https://kind.sigs.k8s.io/docs/user/quick-start#installation), [ctlptl](https://github.com/tilt-dev/ctlptl#how-do-i-install-it), and [tilt](https://docs.tilt.dev/#get-tilt)
+- Install [kind](https://kind.sigs.k8s.io/docs/user/quick-start#installation), [ctlptl](https://github.com/tilt-dev/ctlptl#how-do-i-install-it), [golang-migrate](https://github.com/golang-migrate/migrate/tree/master/cmd/migrate), and [tilt](https://docs.tilt.dev/#get-tilt)
 - Create a new `kind` cluster
   - `ctlptl create cluster kind --registry=ctlptl-registry`
 - Start up everything
   - `tilt up`
+- Once started, click the "Upgrade DB" button on the postgresql pod to apply database migrations
