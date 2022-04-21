@@ -2,7 +2,6 @@ package cmd
 
 import (
 	"context"
-	"database/sql"
 	"fmt"
 
 	"github.com/AlecAivazis/survey/v2"
@@ -10,6 +9,7 @@ import (
 	"github.com/spf13/cobra"
 	"golang.org/x/crypto/bcrypt"
 
+	"github.com/fogo-sh/bogos/backend/pkg/config"
 	"github.com/fogo-sh/bogos/backend/pkg/database"
 )
 
@@ -19,9 +19,12 @@ var createUserCmd = &cobra.Command{
 	Short: "Create a new user",
 	Long:  `Add a new user to the database for testing purposes.`,
 	RunE: func(cmd *cobra.Command, args []string) error {
-		ctx := context.Background()
+		cfg, err := config.Load()
+		if err != nil {
+			return err
+		}
 
-		db, err := sql.Open("postgres", "user=bogos password=bogos-binted dbname=bogos sslmode=disable")
+		queries, err := database.Connect(cfg.DBConnectionString)
 		if err != nil {
 			return fmt.Errorf("error connecting to db: %w", err)
 		}
@@ -50,9 +53,7 @@ var createUserCmd = &cobra.Command{
 			return fmt.Errorf("error hashing password: %w", err)
 		}
 
-		queries := database.New(db)
-
-		userId, err := queries.CreateUser(ctx, database.CreateUserParams{
+		userId, err := queries.CreateUser(context.Background(), database.CreateUserParams{
 			Username:     answers.Username,
 			PasswordHash: hash,
 		})

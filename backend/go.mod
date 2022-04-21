@@ -4,6 +4,8 @@ go 1.18
 
 require (
 	github.com/AlecAivazis/survey/v2 v2.3.4
+	github.com/joho/godotenv v1.4.0
+	github.com/kelseyhightower/envconfig v1.4.0
 	github.com/lib/pq v1.10.5
 	github.com/spf13/cobra v1.4.0
 	golang.org/x/crypto v0.0.0-20210711020723-a769d52b0f97
