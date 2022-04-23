@@ -18,86 +18,86 @@ import (
 // Requires gRPC-Go v1.32.0 or later.
 const _ = grpc.SupportPackageIsVersion7
 
-// UserServiceClient is the client API for UserService service.
+// UsersClient is the client API for Users service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
-type UserServiceClient interface {
+type UsersClient interface {
 	GetJwt(ctx context.Context, in *GetJwtRequest, opts ...grpc.CallOption) (*GetJwtReply, error)
 }
 
-type userServiceClient struct {
+type usersClient struct {
 	cc grpc.ClientConnInterface
 }
 
-func NewUserServiceClient(cc grpc.ClientConnInterface) UserServiceClient {
-	return &userServiceClient{cc}
+func NewUsersClient(cc grpc.ClientConnInterface) UsersClient {
+	return &usersClient{cc}
 }
 
-func (c *userServiceClient) GetJwt(ctx context.Context, in *GetJwtRequest, opts ...grpc.CallOption) (*GetJwtReply, error) {
+func (c *usersClient) GetJwt(ctx context.Context, in *GetJwtRequest, opts ...grpc.CallOption) (*GetJwtReply, error) {
 	out := new(GetJwtReply)
-	err := c.cc.Invoke(ctx, "/bogos.UserService/GetJwt", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/bogos.Users/GetJwt", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-// UserServiceServer is the server API for UserService service.
-// All implementations must embed UnimplementedUserServiceServer
+// UsersServer is the server API for Users service.
+// All implementations must embed UnimplementedUsersServer
 // for forward compatibility
-type UserServiceServer interface {
+type UsersServer interface {
 	GetJwt(context.Context, *GetJwtRequest) (*GetJwtReply, error)
-	mustEmbedUnimplementedUserServiceServer()
+	mustEmbedUnimplementedUsersServer()
 }
 
-// UnimplementedUserServiceServer must be embedded to have forward compatible implementations.
-type UnimplementedUserServiceServer struct {
+// UnimplementedUsersServer must be embedded to have forward compatible implementations.
+type UnimplementedUsersServer struct {
 }
 
-func (UnimplementedUserServiceServer) GetJwt(context.Context, *GetJwtRequest) (*GetJwtReply, error) {
+func (UnimplementedUsersServer) GetJwt(context.Context, *GetJwtRequest) (*GetJwtReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetJwt not implemented")
 }
-func (UnimplementedUserServiceServer) mustEmbedUnimplementedUserServiceServer() {}
+func (UnimplementedUsersServer) mustEmbedUnimplementedUsersServer() {}
 
-// UnsafeUserServiceServer may be embedded to opt out of forward compatibility for this service.
-// Use of this interface is not recommended, as added methods to UserServiceServer will
+// UnsafeUsersServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to UsersServer will
 // result in compilation errors.
-type UnsafeUserServiceServer interface {
-	mustEmbedUnimplementedUserServiceServer()
+type UnsafeUsersServer interface {
+	mustEmbedUnimplementedUsersServer()
 }
 
-func RegisterUserServiceServer(s grpc.ServiceRegistrar, srv UserServiceServer) {
-	s.RegisterService(&UserService_ServiceDesc, srv)
+func RegisterUsersServer(s grpc.ServiceRegistrar, srv UsersServer) {
+	s.RegisterService(&Users_ServiceDesc, srv)
 }
 
-func _UserService_GetJwt_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+func _Users_GetJwt_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GetJwtRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(UserServiceServer).GetJwt(ctx, in)
+		return srv.(UsersServer).GetJwt(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/bogos.UserService/GetJwt",
+		FullMethod: "/bogos.Users/GetJwt",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(UserServiceServer).GetJwt(ctx, req.(*GetJwtRequest))
+		return srv.(UsersServer).GetJwt(ctx, req.(*GetJwtRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
-// UserService_ServiceDesc is the grpc.ServiceDesc for UserService service.
+// Users_ServiceDesc is the grpc.ServiceDesc for Users service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
-var UserService_ServiceDesc = grpc.ServiceDesc{
-	ServiceName: "bogos.UserService",
-	HandlerType: (*UserServiceServer)(nil),
+var Users_ServiceDesc = grpc.ServiceDesc{
+	ServiceName: "bogos.Users",
+	HandlerType: (*UsersServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
 			MethodName: "GetJwt",
-			Handler:    _UserService_GetJwt_Handler,
+			Handler:    _Users_GetJwt_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

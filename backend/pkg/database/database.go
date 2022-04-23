@@ -3,6 +3,8 @@ package database
 import (
 	"database/sql"
 
+	_ "github.com/lib/pq"
+
 	"github.com/fogo-sh/bogos/backend/pkg/config"
 )
 

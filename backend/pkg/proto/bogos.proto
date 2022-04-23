@@ -3,7 +3,7 @@ package bogos;
 
 option go_package = "github.com/fogo-sh/bogos/backend/pkg/proto";
 
-service UserService {
+service Users {
   rpc GetJwt (GetJwtRequest) returns (GetJwtReply) {}
 }
 

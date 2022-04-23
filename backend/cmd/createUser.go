@@ -2,10 +2,9 @@ package cmd
 
 import (
 	"context"
-	"fmt"
 
 	"github.com/AlecAivazis/survey/v2"
-	_ "github.com/lib/pq"
+	"github.com/rs/zerolog/log"
 	"github.com/spf13/cobra"
 	"golang.org/x/crypto/bcrypt"
 
@@ -13,20 +12,18 @@ import (
 	"github.com/fogo-sh/bogos/backend/pkg/database"
 )
 
-// createUserCmd represents the createUser command
 var createUserCmd = &cobra.Command{
 	Use:   "user",
 	Short: "Create a new user",
-	Long:  `Add a new user to the database for testing purposes.`,
-	RunE: func(cmd *cobra.Command, args []string) error {
+	Run: func(cmd *cobra.Command, args []string) {
 		cfg, err := config.Load()
 		if err != nil {
-			return err
+			log.Fatal().Err(err).Msg("Error loading config")
 		}
 
 		queries, err := database.Connect(cfg)
 		if err != nil {
-			return fmt.Errorf("error connecting to db: %w", err)
+			log.Fatal().Err(err).Msg("Error connecting to database")
 		}
 
 		answers := struct {
@@ -45,12 +42,12 @@ var createUserCmd = &cobra.Command{
 			},
 		}, &answers)
 		if err != nil {
-			return fmt.Errorf("error getting input values: %w", err)
+			log.Fatal().Err(err).Msg("Error getting input values")
 		}
 
 		hash, err := bcrypt.GenerateFromPassword([]byte(answers.Password), bcrypt.DefaultCost)
 		if err != nil {
-			return fmt.Errorf("error hashing password: %w", err)
+			log.Fatal().Err(err).Msg("Error hashing password")
 		}
 
 		userId, err := queries.CreateUser(context.Background(), database.CreateUserParams{
@@ -58,11 +55,10 @@ var createUserCmd = &cobra.Command{
 			PasswordHash: hash,
 		})
 		if err != nil {
-			return fmt.Errorf("error creating user: %w", err)
+			log.Fatal().Err(err).Msg("Error creating user")
 		}
-		fmt.Printf("Created user %d\n", userId)
 
-		return nil
+		log.Info().Int32("id", userId).Msg("User created")
 	},
 }
 
