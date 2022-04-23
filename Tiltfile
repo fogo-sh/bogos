@@ -5,16 +5,6 @@ db_username = "bogos"
 db_password = "bogos-binted"
 db_name = "bogos"
 
-db_connection_url = (
-    "postgresql://"
-    + db_username
-    + ":"
-    + db_password
-    + "@localhost/"
-    + db_name
-    + "?sslmode=disable"
-)
-
 helm_remote(
     "postgresql",
     repo_url="https://charts.bitnami.com/bitnami",
@@ -28,14 +18,7 @@ k8s_resource("postgresql", port_forwards=[5432])
 
 cmd_button(
     "postgresql:upgrade",
-    argv=[
-        "migrate",
-        "-database",
-        db_connection_url,
-        "-path",
-        "backend/pkg/database/migrations",
-        "up",
-    ],
+    argv=["sh", "-c", "cd ./backend && go run . db upgrade"],
     resource="postgresql",
     icon_name="upgrade",
     text="Upgrade DB",

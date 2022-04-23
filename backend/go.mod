@@ -4,6 +4,7 @@ go 1.18
 
 require (
 	github.com/AlecAivazis/survey/v2 v2.3.4
+	github.com/golang-migrate/migrate/v4 v4.15.1
 	github.com/joho/godotenv v1.4.0
 	github.com/kelseyhightower/envconfig v1.4.0
 	github.com/lib/pq v1.10.5
@@ -16,15 +17,18 @@ require (
 
 require (
 	github.com/golang/protobuf v1.5.2 // indirect
+	github.com/hashicorp/errwrap v1.0.0 // indirect
+	github.com/hashicorp/go-multierror v1.1.0 // indirect
 	github.com/inconshreveable/mousetrap v1.0.0 // indirect
 	github.com/kballard/go-shellquote v0.0.0-20180428030007-95032a82bc51 // indirect
-	github.com/mattn/go-colorable v0.1.2 // indirect
-	github.com/mattn/go-isatty v0.0.8 // indirect
+	github.com/mattn/go-colorable v0.1.6 // indirect
+	github.com/mattn/go-isatty v0.0.12 // indirect
 	github.com/mgutz/ansi v0.0.0-20170206155736-9520e82c474b // indirect
 	github.com/spf13/pflag v1.0.5 // indirect
-	golang.org/x/net v0.0.0-20210805182204-aaa1db679c0d // indirect
-	golang.org/x/sys v0.0.0-20210809222454-d867a43fc93e // indirect
+	go.uber.org/atomic v1.6.0 // indirect
+	golang.org/x/net v0.0.0-20211013171255-e13a2654a71e // indirect
+	golang.org/x/sys v0.0.0-20211013075003-97ac67df715c // indirect
 	golang.org/x/term v0.0.0-20210503060354-a79de5458b56 // indirect
-	golang.org/x/text v0.3.6 // indirect
-	google.golang.org/genproto v0.0.0-20200526211855-cb27e3aa2013 // indirect
+	golang.org/x/text v0.3.7 // indirect
+	google.golang.org/genproto v0.0.0-20211013025323-ce878158c4d4 // indirect
 )
