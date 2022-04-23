@@ -27,6 +27,7 @@ func NewMigrateInstance(config *config.Config) (*migrate.Migrate, error) {
 	if err != nil {
 		return nil, fmt.Errorf("error creating postgres migrate driver: %w", err)
 	}
+
 	migrationSource, err := iofs.New(migrationsFs, "migrations")
 	if err != nil {
 		return nil, fmt.Errorf("error creating migration source: %w", err)
