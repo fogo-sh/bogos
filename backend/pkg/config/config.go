@@ -15,6 +15,7 @@ type Config struct {
 	ListenAddr         string `split_words:"true" default:"localhost:9999"`
 	LogLevel           string `split_words:"true" default:"debug"`
 	UseJsonLogging     bool   `split_words:"true" default:"false"`
+	JwtSecret          []byte `split_words:"true" default:"bogos-binted"`
 }
 
 var loadedConfig *Config

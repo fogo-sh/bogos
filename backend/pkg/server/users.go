@@ -1,0 +1,76 @@
+package server
+
+import (
+	"context"
+	"database/sql"
+	"errors"
+	"time"
+
+	"github.com/lestrrat-go/jwx/v2/jwa"
+	"github.com/lestrrat-go/jwx/v2/jwt"
+	"github.com/rs/zerolog"
+	"github.com/rs/zerolog/log"
+	"golang.org/x/crypto/bcrypt"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
+
+	"github.com/fogo-sh/bogos/backend/pkg/proto"
+)
+
+type usersService struct {
+	server *Server
+	logger zerolog.Logger
+	proto.UnimplementedUsersServer
+}
+
+func (u usersService) GetJwt(ctx context.Context, request *proto.GetJwtRequest) (*proto.GetJwtReply, error) {
+	u.logger.Info().Msg("Begin GetJwt request.")
+
+	user, err := u.server.db.GetUserByUsername(ctx, request.GetUsername())
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			log.Warn().Str("username", request.GetUsername()).Msg("Attempted to fetch JWT with invalid username")
+			return nil, status.Error(codes.PermissionDenied, "invalid username or password")
+		} else {
+			u.logger.Error().Err(err).Msg("Error fetching user")
+			return nil, status.Error(codes.Internal, "")
+		}
+	}
+
+	err = bcrypt.CompareHashAndPassword(user.PasswordHash, []byte(request.GetPassword()))
+	if err != nil {
+		if errors.Is(err, bcrypt.ErrMismatchedHashAndPassword) {
+			log.Warn().Str("username", request.GetUsername()).Msg("Attempted to fetch JWT with invalid password")
+			return nil, status.Error(codes.PermissionDenied, "invalid username or password")
+		} else {
+			u.logger.Error().Err(err).Msg("Error comparing password")
+			return nil, status.Error(codes.Internal, "")
+		}
+	}
+
+	tok, err := jwt.NewBuilder().
+		IssuedAt(time.Now()).
+		Subject(user.Username).
+		Build()
+	if err != nil {
+		u.logger.Error().Err(err).Msg("Error building JWT")
+		return nil, status.Error(codes.Internal, "")
+	}
+
+	signed, err := jwt.Sign(tok, jwt.WithKey(jwa.HS512, u.server.config.JwtSecret))
+	if err != nil {
+		u.logger.Error().Err(err).Msg("Error signing JWT")
+		return nil, status.Error(codes.Internal, "")
+	}
+
+	u.logger.Info().Str("username", user.Username).Msg("JWT fetched")
+
+	return &proto.GetJwtReply{Jwt: string(signed)}, nil
+}
+
+func newUsersService(server *Server) *usersService {
+	return &usersService{
+		server: server,
+		logger: log.With().Str("service", "users").Logger(),
+	}
+}
