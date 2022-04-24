@@ -9,6 +9,7 @@ require (
 	github.com/kelseyhightower/envconfig v1.4.0
 	github.com/lestrrat-go/jwx/v2 v2.0.0
 	github.com/lib/pq v1.10.5
+	github.com/philip-bui/grpc-zerolog v1.0.1
 	github.com/rs/zerolog v1.26.1
 	github.com/spf13/cobra v1.4.0
 	golang.org/x/crypto v0.0.0-20220214200702-86341886e292

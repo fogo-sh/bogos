@@ -13,7 +13,9 @@ import (
 	"golang.org/x/crypto/bcrypt"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
+	"google.golang.org/protobuf/types/known/timestamppb"
 
+	"github.com/fogo-sh/bogos/backend/pkg/database"
 	"github.com/fogo-sh/bogos/backend/pkg/proto"
 )
 
@@ -24,7 +26,7 @@ type usersService struct {
 }
 
 func (u usersService) GetJwt(ctx context.Context, request *proto.GetJwtRequest) (*proto.GetJwtReply, error) {
-	u.logger.Info().Msg("Begin GetJwt request.")
+	u.logger.Info().Str("method", "GetJwt").Msg("Begin request.")
 
 	user, err := u.server.db.GetUserByUsername(ctx, request.GetUsername())
 	if err != nil {
@@ -66,6 +68,24 @@ func (u usersService) GetJwt(ctx context.Context, request *proto.GetJwtRequest) 
 	u.logger.Info().Str("username", user.Username).Msg("JWT fetched")
 
 	return &proto.GetJwtReply{Jwt: string(signed)}, nil
+}
+
+func (u usersService) GetCurrentUser(ctx context.Context, _ *proto.GetCurrentUserRequest) (*proto.User, error) {
+	u.logger.Info().Str("method", "GetCurrentUser").Msg("Begin request.")
+
+	currentUser, err := u.server.authorize(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	return &proto.User{
+		Id:          currentUser.ID,
+		Username:    currentUser.Username,
+		DisplayName: database.NullStringToPtr(currentUser.DisplayName),
+		AvatarUrl:   database.NullStringToPtr(currentUser.AvatarUrl),
+		CreatedAt:   timestamppb.New(currentUser.CreatedAt),
+		UpdatedAt:   database.NullTimeToTimestamppb(currentUser.UpdatedAt),
+	}, nil
 }
 
 func newUsersService(server *Server) *usersService {

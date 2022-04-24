@@ -1,10 +1,13 @@
 syntax = "proto3";
 package bogos;
 
+import "google/protobuf/timestamp.proto";
+
 option go_package = "github.com/fogo-sh/bogos/backend/pkg/proto";
 
 service Users {
   rpc GetJwt (GetJwtRequest) returns (GetJwtReply) {}
+  rpc GetCurrentUser (GetCurrentUserRequest) returns (User) {}
 }
 
 message GetJwtRequest {
@@ -14,4 +17,15 @@ message GetJwtRequest {
 
 message GetJwtReply {
   string jwt = 1;
+}
+
+message GetCurrentUserRequest {}
+
+message User {
+  int32 id = 1;
+  string username = 2;
+  optional string display_name = 3;
+  optional string avatar_url = 4;
+  google.protobuf.Timestamp created_at = 5;
+  optional google.protobuf.Timestamp updated_at = 6;
 }
