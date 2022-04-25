@@ -6,6 +6,19 @@ import (
 	"google.golang.org/protobuf/types/known/timestamppb"
 )
 
+func PtrToNullString(value *string) sql.NullString {
+	if value == nil {
+		return sql.NullString{
+			Valid:  false,
+			String: "",
+		}
+	}
+	return sql.NullString{
+		Valid:  true,
+		String: *value,
+	}
+}
+
 func NullStringToPtr(value sql.NullString) *string {
 	if value.Valid {
 		return &value.String

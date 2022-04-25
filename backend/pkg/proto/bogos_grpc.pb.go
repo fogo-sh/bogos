@@ -24,6 +24,7 @@ const _ = grpc.SupportPackageIsVersion7
 type UsersClient interface {
 	GetJwt(ctx context.Context, in *GetJwtRequest, opts ...grpc.CallOption) (*GetJwtReply, error)
 	GetCurrentUser(ctx context.Context, in *GetCurrentUserRequest, opts ...grpc.CallOption) (*User, error)
+	UpdateCurrentUser(ctx context.Context, in *UpdateCurrentUserRequest, opts ...grpc.CallOption) (*User, error)
 }
 
 type usersClient struct {
@@ -52,12 +53,22 @@ func (c *usersClient) GetCurrentUser(ctx context.Context, in *GetCurrentUserRequ
 	return out, nil
 }
 
+func (c *usersClient) UpdateCurrentUser(ctx context.Context, in *UpdateCurrentUserRequest, opts ...grpc.CallOption) (*User, error) {
+	out := new(User)
+	err := c.cc.Invoke(ctx, "/bogos.Users/UpdateCurrentUser", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // UsersServer is the server API for Users service.
 // All implementations must embed UnimplementedUsersServer
 // for forward compatibility
 type UsersServer interface {
 	GetJwt(context.Context, *GetJwtRequest) (*GetJwtReply, error)
 	GetCurrentUser(context.Context, *GetCurrentUserRequest) (*User, error)
+	UpdateCurrentUser(context.Context, *UpdateCurrentUserRequest) (*User, error)
 	mustEmbedUnimplementedUsersServer()
 }
 
@@ -70,6 +81,9 @@ func (UnimplementedUsersServer) GetJwt(context.Context, *GetJwtRequest) (*GetJwt
 }
 func (UnimplementedUsersServer) GetCurrentUser(context.Context, *GetCurrentUserRequest) (*User, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetCurrentUser not implemented")
+}
+func (UnimplementedUsersServer) UpdateCurrentUser(context.Context, *UpdateCurrentUserRequest) (*User, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdateCurrentUser not implemented")
 }
 func (UnimplementedUsersServer) mustEmbedUnimplementedUsersServer() {}
 
@@ -120,6 +134,24 @@ func _Users_GetCurrentUser_Handler(srv interface{}, ctx context.Context, dec fun
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Users_UpdateCurrentUser_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdateCurrentUserRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UsersServer).UpdateCurrentUser(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/bogos.Users/UpdateCurrentUser",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UsersServer).UpdateCurrentUser(ctx, req.(*UpdateCurrentUserRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // Users_ServiceDesc is the grpc.ServiceDesc for Users service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -134,6 +166,10 @@ var Users_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetCurrentUser",
 			Handler:    _Users_GetCurrentUser_Handler,
+		},
+		{
+			MethodName: "UpdateCurrentUser",
+			Handler:    _Users_UpdateCurrentUser_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

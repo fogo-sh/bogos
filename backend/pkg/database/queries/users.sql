@@ -8,3 +8,12 @@ SELECT *
 FROM users
 WHERE username = $1
 LIMIT 1;
+
+-- name: UpdateUser :one
+UPDATE users
+SET display_name  = $1,
+    avatar_url    = $2,
+    password_hash = $3,
+    updated_at    = NOW()
+WHERE id = $4
+RETURNING *;

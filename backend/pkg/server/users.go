@@ -88,6 +88,53 @@ func (u usersService) GetCurrentUser(ctx context.Context, _ *proto.GetCurrentUse
 	}, nil
 }
 
+func (u usersService) UpdateCurrentUser(ctx context.Context, request *proto.UpdateCurrentUserRequest) (*proto.User, error) {
+	u.logger.Info().Str("method", "GetCurrentUser").Msg("Begin request.")
+
+	currentUser, err := u.server.authorize(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	updateParams := database.UpdateUserParams{
+		ID: currentUser.ID,
+	}
+
+	if request.UpdateAvatarUrl {
+		updateParams.AvatarUrl = database.PtrToNullString(request.AvatarUrl)
+	} else {
+		updateParams.AvatarUrl = currentUser.AvatarUrl
+	}
+
+	if request.UpdateDisplayName {
+		updateParams.DisplayName = database.PtrToNullString(request.DisplayName)
+	} else {
+		updateParams.DisplayName = currentUser.DisplayName
+	}
+
+	if request.UpdatePassword {
+		newHash, err := bcrypt.GenerateFromPassword([]byte(request.GetPassword()), bcrypt.DefaultCost)
+		if err != nil {
+			log.Error().Err(err).Msg("Error hashing new password")
+			return nil, status.Error(codes.Internal, "")
+		}
+		updateParams.PasswordHash = newHash
+	} else {
+		updateParams.PasswordHash = currentUser.PasswordHash
+	}
+
+	newUser, err := u.server.db.UpdateUser(ctx, updateParams)
+
+	return &proto.User{
+		Id:          newUser.ID,
+		Username:    newUser.Username,
+		DisplayName: database.NullStringToPtr(newUser.DisplayName),
+		AvatarUrl:   database.NullStringToPtr(newUser.AvatarUrl),
+		CreatedAt:   timestamppb.New(newUser.CreatedAt),
+		UpdatedAt:   database.NullTimeToTimestamppb(newUser.UpdatedAt),
+	}, nil
+}
+
 func newUsersService(server *Server) *usersService {
 	return &usersService{
 		server: server,
