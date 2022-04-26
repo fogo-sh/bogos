@@ -1,6 +1,7 @@
 import type { LoaderFunction } from "@remix-run/node";
 import { json } from "@remix-run/node";
 import { useLoaderData } from "@remix-run/react";
+import { users } from "~/utils/grpc.server";
 
 type User = {
   username: string;
@@ -89,6 +90,11 @@ const fakeData: Outing[] = [
 ];
 
 export const loader: LoaderFunction = async () => {
+  users.GetJwt({ username: "invalid", password: "invalid" }, (error, resp) => {
+    console.log("error", error);
+    console.log("resp", resp);
+  });
+
   const data: LoaderData = fakeData;
   return json(data);
 };
