@@ -175,3 +175,125 @@ var Users_ServiceDesc = grpc.ServiceDesc{
 	Streams:  []grpc.StreamDesc{},
 	Metadata: "pkg/proto/bogos.proto",
 }
+
+// OutingsClient is the client API for Outings service.
+//
+// For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
+type OutingsClient interface {
+	ListOutings(ctx context.Context, in *ListOutingsRequest, opts ...grpc.CallOption) (*ListOutingsReply, error)
+	ListOutingUsers(ctx context.Context, in *ListOutingUsersRequest, opts ...grpc.CallOption) (*ListOutingUsersReply, error)
+}
+
+type outingsClient struct {
+	cc grpc.ClientConnInterface
+}
+
+func NewOutingsClient(cc grpc.ClientConnInterface) OutingsClient {
+	return &outingsClient{cc}
+}
+
+func (c *outingsClient) ListOutings(ctx context.Context, in *ListOutingsRequest, opts ...grpc.CallOption) (*ListOutingsReply, error) {
+	out := new(ListOutingsReply)
+	err := c.cc.Invoke(ctx, "/bogos.Outings/ListOutings", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *outingsClient) ListOutingUsers(ctx context.Context, in *ListOutingUsersRequest, opts ...grpc.CallOption) (*ListOutingUsersReply, error) {
+	out := new(ListOutingUsersReply)
+	err := c.cc.Invoke(ctx, "/bogos.Outings/ListOutingUsers", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+// OutingsServer is the server API for Outings service.
+// All implementations must embed UnimplementedOutingsServer
+// for forward compatibility
+type OutingsServer interface {
+	ListOutings(context.Context, *ListOutingsRequest) (*ListOutingsReply, error)
+	ListOutingUsers(context.Context, *ListOutingUsersRequest) (*ListOutingUsersReply, error)
+	mustEmbedUnimplementedOutingsServer()
+}
+
+// UnimplementedOutingsServer must be embedded to have forward compatible implementations.
+type UnimplementedOutingsServer struct {
+}
+
+func (UnimplementedOutingsServer) ListOutings(context.Context, *ListOutingsRequest) (*ListOutingsReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ListOutings not implemented")
+}
+func (UnimplementedOutingsServer) ListOutingUsers(context.Context, *ListOutingUsersRequest) (*ListOutingUsersReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ListOutingUsers not implemented")
+}
+func (UnimplementedOutingsServer) mustEmbedUnimplementedOutingsServer() {}
+
+// UnsafeOutingsServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to OutingsServer will
+// result in compilation errors.
+type UnsafeOutingsServer interface {
+	mustEmbedUnimplementedOutingsServer()
+}
+
+func RegisterOutingsServer(s grpc.ServiceRegistrar, srv OutingsServer) {
+	s.RegisterService(&Outings_ServiceDesc, srv)
+}
+
+func _Outings_ListOutings_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListOutingsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(OutingsServer).ListOutings(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/bogos.Outings/ListOutings",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(OutingsServer).ListOutings(ctx, req.(*ListOutingsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Outings_ListOutingUsers_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListOutingUsersRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(OutingsServer).ListOutingUsers(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/bogos.Outings/ListOutingUsers",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(OutingsServer).ListOutingUsers(ctx, req.(*ListOutingUsersRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+// Outings_ServiceDesc is the grpc.ServiceDesc for Outings service.
+// It's only intended for direct use with grpc.RegisterService,
+// and not to be introspected or modified (even as a copy)
+var Outings_ServiceDesc = grpc.ServiceDesc{
+	ServiceName: "bogos.Outings",
+	HandlerType: (*OutingsServer)(nil),
+	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "ListOutings",
+			Handler:    _Outings_ListOutings_Handler,
+		},
+		{
+			MethodName: "ListOutingUsers",
+			Handler:    _Outings_ListOutingUsers_Handler,
+		},
+	},
+	Streams:  []grpc.StreamDesc{},
+	Metadata: "pkg/proto/bogos.proto",
+}

@@ -8,10 +8,7 @@ import (
 
 func PtrToNullString(value *string) sql.NullString {
 	if value == nil {
-		return sql.NullString{
-			Valid:  false,
-			String: "",
-		}
+		return sql.NullString{}
 	}
 	return sql.NullString{
 		Valid:  true,

@@ -13,7 +13,6 @@ import (
 	"golang.org/x/crypto/bcrypt"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
-	"google.golang.org/protobuf/types/known/timestamppb"
 
 	"github.com/fogo-sh/bogos/backend/pkg/database"
 	"github.com/fogo-sh/bogos/backend/pkg/proto"
@@ -22,6 +21,7 @@ import (
 type usersService struct {
 	server *Server
 	logger zerolog.Logger
+
 	proto.UnimplementedUsersServer
 }
 
@@ -78,14 +78,7 @@ func (u usersService) GetCurrentUser(ctx context.Context, _ *proto.GetCurrentUse
 		return nil, err
 	}
 
-	return &proto.User{
-		Id:          currentUser.ID,
-		Username:    currentUser.Username,
-		DisplayName: database.NullStringToPtr(currentUser.DisplayName),
-		AvatarUrl:   database.NullStringToPtr(currentUser.AvatarUrl),
-		CreatedAt:   timestamppb.New(currentUser.CreatedAt),
-		UpdatedAt:   database.NullTimeToTimestamppb(currentUser.UpdatedAt),
-	}, nil
+	return proto.DBUserToProtoUser(currentUser), nil
 }
 
 func (u usersService) UpdateCurrentUser(ctx context.Context, request *proto.UpdateCurrentUserRequest) (*proto.User, error) {
@@ -125,14 +118,7 @@ func (u usersService) UpdateCurrentUser(ctx context.Context, request *proto.Upda
 
 	newUser, err := u.server.db.UpdateUser(ctx, updateParams)
 
-	return &proto.User{
-		Id:          newUser.ID,
-		Username:    newUser.Username,
-		DisplayName: database.NullStringToPtr(newUser.DisplayName),
-		AvatarUrl:   database.NullStringToPtr(newUser.AvatarUrl),
-		CreatedAt:   timestamppb.New(newUser.CreatedAt),
-		UpdatedAt:   database.NullTimeToTimestamppb(newUser.UpdatedAt),
-	}, nil
+	return proto.DBUserToProtoUser(newUser), nil
 }
 
 func newUsersService(server *Server) *usersService {

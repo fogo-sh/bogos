@@ -335,6 +335,264 @@ func (x *User) GetUpdatedAt() *timestamppb.Timestamp {
 	return nil
 }
 
+type ListOutingsRequest struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+}
+
+func (x *ListOutingsRequest) Reset() {
+	*x = ListOutingsRequest{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_pkg_proto_bogos_proto_msgTypes[5]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *ListOutingsRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ListOutingsRequest) ProtoMessage() {}
+
+func (x *ListOutingsRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_pkg_proto_bogos_proto_msgTypes[5]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ListOutingsRequest.ProtoReflect.Descriptor instead.
+func (*ListOutingsRequest) Descriptor() ([]byte, []int) {
+	return file_pkg_proto_bogos_proto_rawDescGZIP(), []int{5}
+}
+
+type ListOutingsReply struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Outings []*Outing `protobuf:"bytes,1,rep,name=outings,proto3" json:"outings,omitempty"`
+}
+
+func (x *ListOutingsReply) Reset() {
+	*x = ListOutingsReply{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_pkg_proto_bogos_proto_msgTypes[6]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *ListOutingsReply) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ListOutingsReply) ProtoMessage() {}
+
+func (x *ListOutingsReply) ProtoReflect() protoreflect.Message {
+	mi := &file_pkg_proto_bogos_proto_msgTypes[6]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ListOutingsReply.ProtoReflect.Descriptor instead.
+func (*ListOutingsReply) Descriptor() ([]byte, []int) {
+	return file_pkg_proto_bogos_proto_rawDescGZIP(), []int{6}
+}
+
+func (x *ListOutingsReply) GetOutings() []*Outing {
+	if x != nil {
+		return x.Outings
+	}
+	return nil
+}
+
+type ListOutingUsersRequest struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	OutingId int32 `protobuf:"varint,1,opt,name=outing_id,json=outingId,proto3" json:"outing_id,omitempty"`
+}
+
+func (x *ListOutingUsersRequest) Reset() {
+	*x = ListOutingUsersRequest{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_pkg_proto_bogos_proto_msgTypes[7]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *ListOutingUsersRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ListOutingUsersRequest) ProtoMessage() {}
+
+func (x *ListOutingUsersRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_pkg_proto_bogos_proto_msgTypes[7]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ListOutingUsersRequest.ProtoReflect.Descriptor instead.
+func (*ListOutingUsersRequest) Descriptor() ([]byte, []int) {
+	return file_pkg_proto_bogos_proto_rawDescGZIP(), []int{7}
+}
+
+func (x *ListOutingUsersRequest) GetOutingId() int32 {
+	if x != nil {
+		return x.OutingId
+	}
+	return 0
+}
+
+type ListOutingUsersReply struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Users []*User `protobuf:"bytes,1,rep,name=users,proto3" json:"users,omitempty"`
+}
+
+func (x *ListOutingUsersReply) Reset() {
+	*x = ListOutingUsersReply{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_pkg_proto_bogos_proto_msgTypes[8]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *ListOutingUsersReply) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*ListOutingUsersReply) ProtoMessage() {}
+
+func (x *ListOutingUsersReply) ProtoReflect() protoreflect.Message {
+	mi := &file_pkg_proto_bogos_proto_msgTypes[8]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use ListOutingUsersReply.ProtoReflect.Descriptor instead.
+func (*ListOutingUsersReply) Descriptor() ([]byte, []int) {
+	return file_pkg_proto_bogos_proto_rawDescGZIP(), []int{8}
+}
+
+func (x *ListOutingUsersReply) GetUsers() []*User {
+	if x != nil {
+		return x.Users
+	}
+	return nil
+}
+
+type Outing struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	Id        int32                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	Title     string                 `protobuf:"bytes,2,opt,name=title,proto3" json:"title,omitempty"`
+	Date      *timestamppb.Timestamp `protobuf:"bytes,3,opt,name=date,proto3" json:"date,omitempty"`
+	CreatedAt *timestamppb.Timestamp `protobuf:"bytes,4,opt,name=created_at,json=createdAt,proto3" json:"created_at,omitempty"`
+	UpdatedAt *timestamppb.Timestamp `protobuf:"bytes,5,opt,name=updated_at,json=updatedAt,proto3,oneof" json:"updated_at,omitempty"`
+}
+
+func (x *Outing) Reset() {
+	*x = Outing{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_pkg_proto_bogos_proto_msgTypes[9]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *Outing) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*Outing) ProtoMessage() {}
+
+func (x *Outing) ProtoReflect() protoreflect.Message {
+	mi := &file_pkg_proto_bogos_proto_msgTypes[9]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use Outing.ProtoReflect.Descriptor instead.
+func (*Outing) Descriptor() ([]byte, []int) {
+	return file_pkg_proto_bogos_proto_rawDescGZIP(), []int{9}
+}
+
+func (x *Outing) GetId() int32 {
+	if x != nil {
+		return x.Id
+	}
+	return 0
+}
+
+func (x *Outing) GetTitle() string {
+	if x != nil {
+		return x.Title
+	}
+	return ""
+}
+
+func (x *Outing) GetDate() *timestamppb.Timestamp {
+	if x != nil {
+		return x.Date
+	}
+	return nil
+}
+
+func (x *Outing) GetCreatedAt() *timestamppb.Timestamp {
+	if x != nil {
+		return x.CreatedAt
+	}
+	return nil
+}
+
+func (x *Outing) GetUpdatedAt() *timestamppb.Timestamp {
+	if x != nil {
+		return x.UpdatedAt
+	}
+	return nil
+}
+
 var File_pkg_proto_bogos_proto protoreflect.FileDescriptor
 
 var file_pkg_proto_bogos_proto_rawDesc = []byte{
@@ -387,6 +645,33 @@ var file_pkg_proto_bogos_proto_rawDesc = []byte{
 	0x74, 0x65, 0x64, 0x41, 0x74, 0x88, 0x01, 0x01, 0x42, 0x0f, 0x0a, 0x0d, 0x5f, 0x64, 0x69, 0x73,
 	0x70, 0x6c, 0x61, 0x79, 0x5f, 0x6e, 0x61, 0x6d, 0x65, 0x42, 0x0d, 0x0a, 0x0b, 0x5f, 0x61, 0x76,
 	0x61, 0x74, 0x61, 0x72, 0x5f, 0x75, 0x72, 0x6c, 0x42, 0x0d, 0x0a, 0x0b, 0x5f, 0x75, 0x70, 0x64,
+	0x61, 0x74, 0x65, 0x64, 0x5f, 0x61, 0x74, 0x22, 0x14, 0x0a, 0x12, 0x4c, 0x69, 0x73, 0x74, 0x4f,
+	0x75, 0x74, 0x69, 0x6e, 0x67, 0x73, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x22, 0x3b, 0x0a,
+	0x10, 0x4c, 0x69, 0x73, 0x74, 0x4f, 0x75, 0x74, 0x69, 0x6e, 0x67, 0x73, 0x52, 0x65, 0x70, 0x6c,
+	0x79, 0x12, 0x27, 0x0a, 0x07, 0x6f, 0x75, 0x74, 0x69, 0x6e, 0x67, 0x73, 0x18, 0x01, 0x20, 0x03,
+	0x28, 0x0b, 0x32, 0x0d, 0x2e, 0x62, 0x6f, 0x67, 0x6f, 0x73, 0x2e, 0x4f, 0x75, 0x74, 0x69, 0x6e,
+	0x67, 0x52, 0x07, 0x6f, 0x75, 0x74, 0x69, 0x6e, 0x67, 0x73, 0x22, 0x35, 0x0a, 0x16, 0x4c, 0x69,
+	0x73, 0x74, 0x4f, 0x75, 0x74, 0x69, 0x6e, 0x67, 0x55, 0x73, 0x65, 0x72, 0x73, 0x52, 0x65, 0x71,
+	0x75, 0x65, 0x73, 0x74, 0x12, 0x1b, 0x0a, 0x09, 0x6f, 0x75, 0x74, 0x69, 0x6e, 0x67, 0x5f, 0x69,
+	0x64, 0x18, 0x01, 0x20, 0x01, 0x28, 0x05, 0x52, 0x08, 0x6f, 0x75, 0x74, 0x69, 0x6e, 0x67, 0x49,
+	0x64, 0x22, 0x39, 0x0a, 0x14, 0x4c, 0x69, 0x73, 0x74, 0x4f, 0x75, 0x74, 0x69, 0x6e, 0x67, 0x55,
+	0x73, 0x65, 0x72, 0x73, 0x52, 0x65, 0x70, 0x6c, 0x79, 0x12, 0x21, 0x0a, 0x05, 0x75, 0x73, 0x65,
+	0x72, 0x73, 0x18, 0x01, 0x20, 0x03, 0x28, 0x0b, 0x32, 0x0b, 0x2e, 0x62, 0x6f, 0x67, 0x6f, 0x73,
+	0x2e, 0x55, 0x73, 0x65, 0x72, 0x52, 0x05, 0x75, 0x73, 0x65, 0x72, 0x73, 0x22, 0xe8, 0x01, 0x0a,
+	0x06, 0x4f, 0x75, 0x74, 0x69, 0x6e, 0x67, 0x12, 0x0e, 0x0a, 0x02, 0x69, 0x64, 0x18, 0x01, 0x20,
+	0x01, 0x28, 0x05, 0x52, 0x02, 0x69, 0x64, 0x12, 0x14, 0x0a, 0x05, 0x74, 0x69, 0x74, 0x6c, 0x65,
+	0x18, 0x02, 0x20, 0x01, 0x28, 0x09, 0x52, 0x05, 0x74, 0x69, 0x74, 0x6c, 0x65, 0x12, 0x2e, 0x0a,
+	0x04, 0x64, 0x61, 0x74, 0x65, 0x18, 0x03, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x1a, 0x2e, 0x67, 0x6f,
+	0x6f, 0x67, 0x6c, 0x65, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x62, 0x75, 0x66, 0x2e, 0x54, 0x69,
+	0x6d, 0x65, 0x73, 0x74, 0x61, 0x6d, 0x70, 0x52, 0x04, 0x64, 0x61, 0x74, 0x65, 0x12, 0x39, 0x0a,
+	0x0a, 0x63, 0x72, 0x65, 0x61, 0x74, 0x65, 0x64, 0x5f, 0x61, 0x74, 0x18, 0x04, 0x20, 0x01, 0x28,
+	0x0b, 0x32, 0x1a, 0x2e, 0x67, 0x6f, 0x6f, 0x67, 0x6c, 0x65, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f,
+	0x62, 0x75, 0x66, 0x2e, 0x54, 0x69, 0x6d, 0x65, 0x73, 0x74, 0x61, 0x6d, 0x70, 0x52, 0x09, 0x63,
+	0x72, 0x65, 0x61, 0x74, 0x65, 0x64, 0x41, 0x74, 0x12, 0x3e, 0x0a, 0x0a, 0x75, 0x70, 0x64, 0x61,
+	0x74, 0x65, 0x64, 0x5f, 0x61, 0x74, 0x18, 0x05, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x1a, 0x2e, 0x67,
+	0x6f, 0x6f, 0x67, 0x6c, 0x65, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x62, 0x75, 0x66, 0x2e, 0x54,
+	0x69, 0x6d, 0x65, 0x73, 0x74, 0x61, 0x6d, 0x70, 0x48, 0x00, 0x52, 0x09, 0x75, 0x70, 0x64, 0x61,
+	0x74, 0x65, 0x64, 0x41, 0x74, 0x88, 0x01, 0x01, 0x42, 0x0d, 0x0a, 0x0b, 0x5f, 0x75, 0x70, 0x64,
 	0x61, 0x74, 0x65, 0x64, 0x5f, 0x61, 0x74, 0x32, 0xc1, 0x01, 0x0a, 0x05, 0x55, 0x73, 0x65, 0x72,
 	0x73, 0x12, 0x34, 0x0a, 0x06, 0x47, 0x65, 0x74, 0x4a, 0x77, 0x74, 0x12, 0x14, 0x2e, 0x62, 0x6f,
 	0x67, 0x6f, 0x73, 0x2e, 0x47, 0x65, 0x74, 0x4a, 0x77, 0x74, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73,
@@ -399,11 +684,21 @@ var file_pkg_proto_bogos_proto_rawDesc = []byte{
 	0x43, 0x75, 0x72, 0x72, 0x65, 0x6e, 0x74, 0x55, 0x73, 0x65, 0x72, 0x12, 0x1f, 0x2e, 0x62, 0x6f,
 	0x67, 0x6f, 0x73, 0x2e, 0x55, 0x70, 0x64, 0x61, 0x74, 0x65, 0x43, 0x75, 0x72, 0x72, 0x65, 0x6e,
 	0x74, 0x55, 0x73, 0x65, 0x72, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x0b, 0x2e, 0x62,
-	0x6f, 0x67, 0x6f, 0x73, 0x2e, 0x55, 0x73, 0x65, 0x72, 0x22, 0x00, 0x42, 0x2c, 0x5a, 0x2a, 0x67,
-	0x69, 0x74, 0x68, 0x75, 0x62, 0x2e, 0x63, 0x6f, 0x6d, 0x2f, 0x66, 0x6f, 0x67, 0x6f, 0x2d, 0x73,
-	0x68, 0x2f, 0x62, 0x6f, 0x67, 0x6f, 0x73, 0x2f, 0x62, 0x61, 0x63, 0x6b, 0x65, 0x6e, 0x64, 0x2f,
-	0x70, 0x6b, 0x67, 0x2f, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f,
-	0x33,
+	0x6f, 0x67, 0x6f, 0x73, 0x2e, 0x55, 0x73, 0x65, 0x72, 0x22, 0x00, 0x32, 0x9f, 0x01, 0x0a, 0x07,
+	0x4f, 0x75, 0x74, 0x69, 0x6e, 0x67, 0x73, 0x12, 0x43, 0x0a, 0x0b, 0x4c, 0x69, 0x73, 0x74, 0x4f,
+	0x75, 0x74, 0x69, 0x6e, 0x67, 0x73, 0x12, 0x19, 0x2e, 0x62, 0x6f, 0x67, 0x6f, 0x73, 0x2e, 0x4c,
+	0x69, 0x73, 0x74, 0x4f, 0x75, 0x74, 0x69, 0x6e, 0x67, 0x73, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73,
+	0x74, 0x1a, 0x17, 0x2e, 0x62, 0x6f, 0x67, 0x6f, 0x73, 0x2e, 0x4c, 0x69, 0x73, 0x74, 0x4f, 0x75,
+	0x74, 0x69, 0x6e, 0x67, 0x73, 0x52, 0x65, 0x70, 0x6c, 0x79, 0x22, 0x00, 0x12, 0x4f, 0x0a, 0x0f,
+	0x4c, 0x69, 0x73, 0x74, 0x4f, 0x75, 0x74, 0x69, 0x6e, 0x67, 0x55, 0x73, 0x65, 0x72, 0x73, 0x12,
+	0x1d, 0x2e, 0x62, 0x6f, 0x67, 0x6f, 0x73, 0x2e, 0x4c, 0x69, 0x73, 0x74, 0x4f, 0x75, 0x74, 0x69,
+	0x6e, 0x67, 0x55, 0x73, 0x65, 0x72, 0x73, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x1a, 0x1b,
+	0x2e, 0x62, 0x6f, 0x67, 0x6f, 0x73, 0x2e, 0x4c, 0x69, 0x73, 0x74, 0x4f, 0x75, 0x74, 0x69, 0x6e,
+	0x67, 0x55, 0x73, 0x65, 0x72, 0x73, 0x52, 0x65, 0x70, 0x6c, 0x79, 0x22, 0x00, 0x42, 0x2c, 0x5a,
+	0x2a, 0x67, 0x69, 0x74, 0x68, 0x75, 0x62, 0x2e, 0x63, 0x6f, 0x6d, 0x2f, 0x66, 0x6f, 0x67, 0x6f,
+	0x2d, 0x73, 0x68, 0x2f, 0x62, 0x6f, 0x67, 0x6f, 0x73, 0x2f, 0x62, 0x61, 0x63, 0x6b, 0x65, 0x6e,
+	0x64, 0x2f, 0x70, 0x6b, 0x67, 0x2f, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x62, 0x06, 0x70, 0x72, 0x6f,
+	0x74, 0x6f, 0x33,
 }
 
 var (
@@ -418,29 +713,43 @@ func file_pkg_proto_bogos_proto_rawDescGZIP() []byte {
 	return file_pkg_proto_bogos_proto_rawDescData
 }
 
-var file_pkg_proto_bogos_proto_msgTypes = make([]protoimpl.MessageInfo, 5)
+var file_pkg_proto_bogos_proto_msgTypes = make([]protoimpl.MessageInfo, 10)
 var file_pkg_proto_bogos_proto_goTypes = []interface{}{
 	(*GetJwtRequest)(nil),            // 0: bogos.GetJwtRequest
 	(*GetJwtReply)(nil),              // 1: bogos.GetJwtReply
 	(*GetCurrentUserRequest)(nil),    // 2: bogos.GetCurrentUserRequest
 	(*UpdateCurrentUserRequest)(nil), // 3: bogos.UpdateCurrentUserRequest
 	(*User)(nil),                     // 4: bogos.User
-	(*timestamppb.Timestamp)(nil),    // 5: google.protobuf.Timestamp
+	(*ListOutingsRequest)(nil),       // 5: bogos.ListOutingsRequest
+	(*ListOutingsReply)(nil),         // 6: bogos.ListOutingsReply
+	(*ListOutingUsersRequest)(nil),   // 7: bogos.ListOutingUsersRequest
+	(*ListOutingUsersReply)(nil),     // 8: bogos.ListOutingUsersReply
+	(*Outing)(nil),                   // 9: bogos.Outing
+	(*timestamppb.Timestamp)(nil),    // 10: google.protobuf.Timestamp
 }
 var file_pkg_proto_bogos_proto_depIdxs = []int32{
-	5, // 0: bogos.User.created_at:type_name -> google.protobuf.Timestamp
-	5, // 1: bogos.User.updated_at:type_name -> google.protobuf.Timestamp
-	0, // 2: bogos.Users.GetJwt:input_type -> bogos.GetJwtRequest
-	2, // 3: bogos.Users.GetCurrentUser:input_type -> bogos.GetCurrentUserRequest
-	3, // 4: bogos.Users.UpdateCurrentUser:input_type -> bogos.UpdateCurrentUserRequest
-	1, // 5: bogos.Users.GetJwt:output_type -> bogos.GetJwtReply
-	4, // 6: bogos.Users.GetCurrentUser:output_type -> bogos.User
-	4, // 7: bogos.Users.UpdateCurrentUser:output_type -> bogos.User
-	5, // [5:8] is the sub-list for method output_type
-	2, // [2:5] is the sub-list for method input_type
-	2, // [2:2] is the sub-list for extension type_name
-	2, // [2:2] is the sub-list for extension extendee
-	0, // [0:2] is the sub-list for field type_name
+	10, // 0: bogos.User.created_at:type_name -> google.protobuf.Timestamp
+	10, // 1: bogos.User.updated_at:type_name -> google.protobuf.Timestamp
+	9,  // 2: bogos.ListOutingsReply.outings:type_name -> bogos.Outing
+	4,  // 3: bogos.ListOutingUsersReply.users:type_name -> bogos.User
+	10, // 4: bogos.Outing.date:type_name -> google.protobuf.Timestamp
+	10, // 5: bogos.Outing.created_at:type_name -> google.protobuf.Timestamp
+	10, // 6: bogos.Outing.updated_at:type_name -> google.protobuf.Timestamp
+	0,  // 7: bogos.Users.GetJwt:input_type -> bogos.GetJwtRequest
+	2,  // 8: bogos.Users.GetCurrentUser:input_type -> bogos.GetCurrentUserRequest
+	3,  // 9: bogos.Users.UpdateCurrentUser:input_type -> bogos.UpdateCurrentUserRequest
+	5,  // 10: bogos.Outings.ListOutings:input_type -> bogos.ListOutingsRequest
+	7,  // 11: bogos.Outings.ListOutingUsers:input_type -> bogos.ListOutingUsersRequest
+	1,  // 12: bogos.Users.GetJwt:output_type -> bogos.GetJwtReply
+	4,  // 13: bogos.Users.GetCurrentUser:output_type -> bogos.User
+	4,  // 14: bogos.Users.UpdateCurrentUser:output_type -> bogos.User
+	6,  // 15: bogos.Outings.ListOutings:output_type -> bogos.ListOutingsReply
+	8,  // 16: bogos.Outings.ListOutingUsers:output_type -> bogos.ListOutingUsersReply
+	12, // [12:17] is the sub-list for method output_type
+	7,  // [7:12] is the sub-list for method input_type
+	7,  // [7:7] is the sub-list for extension type_name
+	7,  // [7:7] is the sub-list for extension extendee
+	0,  // [0:7] is the sub-list for field type_name
 }
 
 func init() { file_pkg_proto_bogos_proto_init() }
@@ -509,18 +818,79 @@ func file_pkg_proto_bogos_proto_init() {
 				return nil
 			}
 		}
+		file_pkg_proto_bogos_proto_msgTypes[5].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*ListOutingsRequest); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_pkg_proto_bogos_proto_msgTypes[6].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*ListOutingsReply); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_pkg_proto_bogos_proto_msgTypes[7].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*ListOutingUsersRequest); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_pkg_proto_bogos_proto_msgTypes[8].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*ListOutingUsersReply); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
+		file_pkg_proto_bogos_proto_msgTypes[9].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*Outing); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
 	}
 	file_pkg_proto_bogos_proto_msgTypes[3].OneofWrappers = []interface{}{}
 	file_pkg_proto_bogos_proto_msgTypes[4].OneofWrappers = []interface{}{}
+	file_pkg_proto_bogos_proto_msgTypes[9].OneofWrappers = []interface{}{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: file_pkg_proto_bogos_proto_rawDesc,
 			NumEnums:      0,
-			NumMessages:   5,
+			NumMessages:   10,
 			NumExtensions: 0,
-			NumServices:   1,
+			NumServices:   2,
 		},
 		GoTypes:           file_pkg_proto_bogos_proto_goTypes,
 		DependencyIndexes: file_pkg_proto_bogos_proto_depIdxs,

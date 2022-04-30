@@ -53,6 +53,7 @@ func New(config *config.Config) (*Server, error) {
 	log.Debug().Msg("Registering services.")
 	reflection.Register(grpcServer)
 	proto.RegisterUsersServer(grpcServer, newUsersService(server))
+	proto.RegisterOutingsServer(grpcServer, newOutingsService(server))
 	log.Debug().Msg("Services registered.")
 
 	log.Debug().Msg("Server created.")

@@ -41,3 +41,31 @@ message User {
   google.protobuf.Timestamp created_at = 5;
   optional google.protobuf.Timestamp updated_at = 6;
 }
+
+service Outings {
+  rpc ListOutings (ListOutingsRequest) returns (ListOutingsReply) {}
+  rpc ListOutingUsers (ListOutingUsersRequest) returns (ListOutingUsersReply) {}
+}
+
+message ListOutingsRequest {}
+
+message ListOutingsReply {
+  repeated Outing outings = 1;
+}
+
+message ListOutingUsersRequest {
+  int32 outing_id = 1;
+}
+
+message ListOutingUsersReply {
+  repeated User users = 1;
+}
+
+message Outing {
+  int32 id = 1;
+  string title = 2;
+  google.protobuf.Timestamp date = 3;
+
+  google.protobuf.Timestamp created_at = 4;
+  optional google.protobuf.Timestamp updated_at = 5;
+}
