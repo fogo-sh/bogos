@@ -3,6 +3,8 @@ package server
 import (
 	"context"
 	"database/sql"
+	"fmt"
+	"math/rand"
 	"time"
 
 	"github.com/rs/zerolog"
@@ -112,6 +114,34 @@ func (o *outingsService) ListOutingUsers(_ context.Context, request *proto.ListO
 	}
 
 	return &proto.ListOutingUsersReply{Users: resp}, nil
+}
+
+func (o *outingsService) ListOutingPhotos(_ context.Context, request *proto.ListOutingPhotosRequest) (*proto.ListOutingPhotosReply, error) {
+	var resp []*proto.Photo
+
+	for i := 0; i < 50; i++ {
+		photo := database.Photo{
+			ID:   int32(rand.Intn(100000)),
+			Path: "",
+			Title: sql.NullString{
+				Valid:  true,
+				String: fmt.Sprintf("Cool Photo #%d", i),
+			},
+			CreatedAt: time.Date(2022, 4, 30, 0, 0, i, 0, time.UTC),
+			UpdatedAt: sql.NullTime{},
+			CreatorID: 0,
+			OutingID:  0,
+		}
+		if photo.ID%2 == 0 {
+			photo.Title = sql.NullString{}
+		}
+		resp = append(
+			resp,
+			proto.DBPhotoToProtoPhoto(photo),
+		)
+	}
+
+	return &proto.ListOutingPhotosReply{Photos: resp}, nil
 }
 
 func newOutingsService(server *Server) *outingsService {

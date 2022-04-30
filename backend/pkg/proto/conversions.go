@@ -1,6 +1,8 @@
 package proto
 
 import (
+	"fmt"
+
 	"google.golang.org/protobuf/types/known/timestamppb"
 
 	"github.com/fogo-sh/bogos/backend/pkg/database"
@@ -24,5 +26,15 @@ func DBOutingToProtoOuting(outing database.Outing) *Outing {
 		Date:      timestamppb.New(outing.Date),
 		CreatedAt: timestamppb.New(outing.CreatedAt),
 		UpdatedAt: database.NullTimeToTimestamppb(outing.UpdatedAt),
+	}
+}
+
+func DBPhotoToProtoPhoto(photo database.Photo) *Photo {
+	return &Photo{
+		Id:        photo.ID,
+		Url:       fmt.Sprintf("https://picsum.photos/seed/%d/200/300", photo.ID),
+		Title:     database.NullStringToPtr(photo.Title),
+		CreatedAt: timestamppb.New(photo.CreatedAt),
+		UpdatedAt: database.NullTimeToTimestamppb(photo.UpdatedAt),
 	}
 }

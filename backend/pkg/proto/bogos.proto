@@ -45,6 +45,8 @@ message User {
 service Outings {
   rpc ListOutings (ListOutingsRequest) returns (ListOutingsReply) {}
   rpc ListOutingUsers (ListOutingUsersRequest) returns (ListOutingUsersReply) {}
+
+  rpc ListOutingPhotos (ListOutingPhotosRequest) returns (ListOutingPhotosReply) {}
 }
 
 message ListOutingsRequest {}
@@ -61,10 +63,27 @@ message ListOutingUsersReply {
   repeated User users = 1;
 }
 
+message ListOutingPhotosRequest {
+  int32 outing_id = 1;
+}
+
+message ListOutingPhotosReply {
+  repeated Photo photos = 1;
+}
+
 message Outing {
   int32 id = 1;
   string title = 2;
   google.protobuf.Timestamp date = 3;
+
+  google.protobuf.Timestamp created_at = 4;
+  optional google.protobuf.Timestamp updated_at = 5;
+}
+
+message Photo {
+  int32 id = 1;
+  string url = 2;
+  optional string title = 3;
 
   google.protobuf.Timestamp created_at = 4;
   optional google.protobuf.Timestamp updated_at = 5;

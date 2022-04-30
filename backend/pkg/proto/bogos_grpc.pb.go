@@ -182,6 +182,7 @@ var Users_ServiceDesc = grpc.ServiceDesc{
 type OutingsClient interface {
 	ListOutings(ctx context.Context, in *ListOutingsRequest, opts ...grpc.CallOption) (*ListOutingsReply, error)
 	ListOutingUsers(ctx context.Context, in *ListOutingUsersRequest, opts ...grpc.CallOption) (*ListOutingUsersReply, error)
+	ListOutingPhotos(ctx context.Context, in *ListOutingPhotosRequest, opts ...grpc.CallOption) (*ListOutingPhotosReply, error)
 }
 
 type outingsClient struct {
@@ -210,12 +211,22 @@ func (c *outingsClient) ListOutingUsers(ctx context.Context, in *ListOutingUsers
 	return out, nil
 }
 
+func (c *outingsClient) ListOutingPhotos(ctx context.Context, in *ListOutingPhotosRequest, opts ...grpc.CallOption) (*ListOutingPhotosReply, error) {
+	out := new(ListOutingPhotosReply)
+	err := c.cc.Invoke(ctx, "/bogos.Outings/ListOutingPhotos", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // OutingsServer is the server API for Outings service.
 // All implementations must embed UnimplementedOutingsServer
 // for forward compatibility
 type OutingsServer interface {
 	ListOutings(context.Context, *ListOutingsRequest) (*ListOutingsReply, error)
 	ListOutingUsers(context.Context, *ListOutingUsersRequest) (*ListOutingUsersReply, error)
+	ListOutingPhotos(context.Context, *ListOutingPhotosRequest) (*ListOutingPhotosReply, error)
 	mustEmbedUnimplementedOutingsServer()
 }
 
@@ -228,6 +239,9 @@ func (UnimplementedOutingsServer) ListOutings(context.Context, *ListOutingsReque
 }
 func (UnimplementedOutingsServer) ListOutingUsers(context.Context, *ListOutingUsersRequest) (*ListOutingUsersReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ListOutingUsers not implemented")
+}
+func (UnimplementedOutingsServer) ListOutingPhotos(context.Context, *ListOutingPhotosRequest) (*ListOutingPhotosReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ListOutingPhotos not implemented")
 }
 func (UnimplementedOutingsServer) mustEmbedUnimplementedOutingsServer() {}
 
@@ -278,6 +292,24 @@ func _Outings_ListOutingUsers_Handler(srv interface{}, ctx context.Context, dec 
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Outings_ListOutingPhotos_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListOutingPhotosRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(OutingsServer).ListOutingPhotos(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/bogos.Outings/ListOutingPhotos",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(OutingsServer).ListOutingPhotos(ctx, req.(*ListOutingPhotosRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // Outings_ServiceDesc is the grpc.ServiceDesc for Outings service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -292,6 +324,10 @@ var Outings_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "ListOutingUsers",
 			Handler:    _Outings_ListOutingUsers_Handler,
+		},
+		{
+			MethodName: "ListOutingPhotos",
+			Handler:    _Outings_ListOutingPhotos_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
