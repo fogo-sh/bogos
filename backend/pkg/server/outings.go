@@ -3,12 +3,16 @@ package server
 import (
 	"context"
 	"database/sql"
+	"errors"
 	"fmt"
 	"math/rand"
 	"time"
 
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
+	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/status"
+	"google.golang.org/protobuf/types/known/emptypb"
 
 	"github.com/fogo-sh/bogos/backend/pkg/database"
 	"github.com/fogo-sh/bogos/backend/pkg/proto"
@@ -90,7 +94,66 @@ var testOutingUsers = map[int32][]database.User{
 	},
 }
 
-func (o *outingsService) ListOutings(_ context.Context, _ *proto.ListOutingsRequest) (*proto.ListOutingsReply, error) {
+func (o *outingsService) CreateOuting(ctx context.Context, request *proto.CreateOutingRequest) (*proto.Outing, error) {
+	_, err := o.server.authorize(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	outing, err := o.server.db.CreateOuting(ctx, database.CreateOutingParams{
+		Title: request.GetTitle(),
+		Date:  request.GetDate().AsTime(),
+	})
+	if err != nil {
+		o.logger.Error().Str("operation", "CreateOuting").Err(err).Msg("Error creating outing")
+		return nil, status.Error(codes.Internal, "")
+	}
+
+	return proto.DBOutingToProtoOuting(outing), nil
+}
+
+func (o *outingsService) UpdateOuting(ctx context.Context, request *proto.UpdateOutingRequest) (*proto.Outing, error) {
+	_, err := o.server.authorize(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	currentOuting, err := o.server.db.GetOuting(ctx, request.OutingId)
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return nil, status.Error(codes.NotFound, "no outing with that ID found")
+		} else {
+			o.logger.Error().Str("operation", "UpdateOuting").Err(err).Msg("Error getting current outing")
+			return nil, status.Error(codes.Internal, "")
+		}
+	}
+
+	updateParams := database.UpdateOutingParams{
+		ID: request.OutingId,
+	}
+
+	if request.UpdateTitle {
+		updateParams.Title = request.Title
+	} else {
+		updateParams.Title = currentOuting.Title
+	}
+
+	if request.UpdateDate {
+		updateParams.Date = request.Date.AsTime()
+	} else {
+		updateParams.Date = currentOuting.Date
+	}
+
+	newOuting, err := o.server.db.UpdateOuting(ctx, updateParams)
+	if err != nil {
+		log.Error().Str("operation", "UpdateOuting").Err(err).Msg("Error updating outing")
+		return nil, status.Error(codes.Internal, "")
+	}
+
+	return proto.DBOutingToProtoOuting(newOuting), nil
+}
+
+func (o *outingsService) ListOutings(_ context.Context, _ *emptypb.Empty) (*proto.ListOutingsReply, error) {
 	var resp []*proto.Outing
 
 	for _, outing := range testingOutings {
@@ -114,6 +177,65 @@ func (o *outingsService) ListOutingUsers(_ context.Context, request *proto.ListO
 	}
 
 	return &proto.ListOutingUsersReply{Users: resp}, nil
+}
+
+func (o *outingsService) AddUser(ctx context.Context, request *proto.OutingAddUserRequest) (*emptypb.Empty, error) {
+	_, err := o.server.authorize(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	_, err = o.server.db.GetOuting(ctx, request.OutingId)
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return nil, status.Error(codes.NotFound, "no outing with that ID found")
+		} else {
+			o.logger.Error().Str("operation", "AddUser").Err(err).Msg("Error getting outing")
+			return nil, status.Error(codes.Internal, "")
+		}
+	}
+	_, err = o.server.db.GetUser(ctx, request.UserId)
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return nil, status.Error(codes.NotFound, "no user with that ID found")
+		} else {
+			o.logger.Error().Str("operation", "AddUser").Err(err).Msg("Error getting user")
+			return nil, status.Error(codes.Internal, "")
+		}
+	}
+
+	alreadyInOuting, err := o.server.db.UserInOuting(ctx, database.UserInOutingParams{OutingID: request.OutingId, UserID: request.UserId})
+	if err != nil {
+		o.logger.Error().Str("operation", "AddUser").Err(err).Msg("Error checking if user is in outing")
+		return nil, status.Error(codes.Internal, "")
+	}
+
+	if alreadyInOuting {
+		return &emptypb.Empty{}, nil
+	}
+
+	err = o.server.db.AddUserToOuting(ctx, database.AddUserToOutingParams{OutingID: request.OutingId, UserID: request.UserId})
+	if err != nil {
+		o.logger.Error().Str("operation", "AddUser").Err(err).Msg("Error adding user to outing")
+		return nil, status.Error(codes.Internal, "")
+	}
+
+	return &emptypb.Empty{}, nil
+}
+
+func (o *outingsService) RemoveUser(ctx context.Context, request *proto.OutingRemoveUserRequest) (*emptypb.Empty, error) {
+	_, err := o.server.authorize(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	err = o.server.db.RemoveUserFromOuting(ctx, database.RemoveUserFromOutingParams{OutingID: request.OutingId, UserID: request.UserId})
+	if err != nil {
+		o.logger.Error().Str("operation", "RemoveUser").Err(err).Msg("Error removing user from outing")
+		return nil, status.Error(codes.Internal, "")
+	}
+
+	return &emptypb.Empty{}, nil
 }
 
 func (o *outingsService) ListOutingPhotos(_ context.Context, request *proto.ListOutingPhotosRequest) (*proto.ListOutingPhotosReply, error) {

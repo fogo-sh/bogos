@@ -13,6 +13,7 @@ import (
 	"golang.org/x/crypto/bcrypt"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
+	"google.golang.org/protobuf/types/known/emptypb"
 
 	"github.com/fogo-sh/bogos/backend/pkg/database"
 	"github.com/fogo-sh/bogos/backend/pkg/proto"
@@ -25,7 +26,7 @@ type usersService struct {
 	proto.UnimplementedUsersServer
 }
 
-func (u usersService) GetJwt(ctx context.Context, request *proto.GetJwtRequest) (*proto.GetJwtReply, error) {
+func (u *usersService) GetJwt(ctx context.Context, request *proto.GetJwtRequest) (*proto.GetJwtReply, error) {
 	u.logger.Info().Str("method", "GetJwt").Msg("Begin request.")
 
 	user, err := u.server.db.GetUserByUsername(ctx, request.GetUsername())
@@ -70,7 +71,7 @@ func (u usersService) GetJwt(ctx context.Context, request *proto.GetJwtRequest) 
 	return &proto.GetJwtReply{Jwt: string(signed)}, nil
 }
 
-func (u usersService) GetCurrentUser(ctx context.Context, _ *proto.GetCurrentUserRequest) (*proto.User, error) {
+func (u *usersService) GetCurrentUser(ctx context.Context, _ *emptypb.Empty) (*proto.User, error) {
 	u.logger.Info().Str("method", "GetCurrentUser").Msg("Begin request.")
 
 	currentUser, err := u.server.authorize(ctx)
@@ -81,7 +82,7 @@ func (u usersService) GetCurrentUser(ctx context.Context, _ *proto.GetCurrentUse
 	return proto.DBUserToProtoUser(currentUser), nil
 }
 
-func (u usersService) UpdateCurrentUser(ctx context.Context, request *proto.UpdateCurrentUserRequest) (*proto.User, error) {
+func (u *usersService) UpdateCurrentUser(ctx context.Context, request *proto.UpdateCurrentUserRequest) (*proto.User, error) {
 	u.logger.Info().Str("method", "GetCurrentUser").Msg("Begin request.")
 
 	currentUser, err := u.server.authorize(ctx)
@@ -117,6 +118,10 @@ func (u usersService) UpdateCurrentUser(ctx context.Context, request *proto.Upda
 	}
 
 	newUser, err := u.server.db.UpdateUser(ctx, updateParams)
+	if err != nil {
+		log.Error().Str("operation", "UpdateCurrentUser").Err(err).Msg("Error updating current user")
+		return nil, status.Error(codes.Internal, "")
+	}
 
 	return proto.DBUserToProtoUser(newUser), nil
 }

@@ -50,7 +50,7 @@ var createUserCmd = &cobra.Command{
 			log.Fatal().Err(err).Msg("Error hashing password")
 		}
 
-		userId, err := queries.CreateUser(context.Background(), database.CreateUserParams{
+		user, err := queries.CreateUser(context.Background(), database.CreateUserParams{
 			Username:     answers.Username,
 			PasswordHash: hash,
 		})
@@ -58,7 +58,7 @@ var createUserCmd = &cobra.Command{
 			log.Fatal().Err(err).Msg("Error creating user")
 		}
 
-		log.Info().Int32("id", userId).Msg("User created")
+		log.Info().Int32("id", user.ID).Msg("User created")
 	},
 }
 

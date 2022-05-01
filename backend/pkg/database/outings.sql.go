@@ -27,28 +27,33 @@ func (q *Queries) AddUserToOuting(ctx context.Context, arg AddUserToOutingParams
 }
 
 const createOuting = `-- name: CreateOuting :one
-INSERT INTO outings (id, title, date)
-VALUES ($1, $2, $3)
-RETURNING id
+INSERT INTO outings (title, date)
+VALUES ($1, $2)
+RETURNING id, title, date, created_at, updated_at
 `
 
 type CreateOutingParams struct {
-	ID    int32
 	Title string
 	Date  time.Time
 }
 
-func (q *Queries) CreateOuting(ctx context.Context, arg CreateOutingParams) (int32, error) {
-	row := q.db.QueryRowContext(ctx, createOuting, arg.ID, arg.Title, arg.Date)
-	var id int32
-	err := row.Scan(&id)
-	return id, err
+func (q *Queries) CreateOuting(ctx context.Context, arg CreateOutingParams) (Outing, error) {
+	row := q.db.QueryRowContext(ctx, createOuting, arg.Title, arg.Date)
+	var i Outing
+	err := row.Scan(
+		&i.ID,
+		&i.Title,
+		&i.Date,
+		&i.CreatedAt,
+		&i.UpdatedAt,
+	)
+	return i, err
 }
 
 const createPhoto = `-- name: CreatePhoto :one
 INSERT INTO photos (path, title, creator_id, outing_id)
 VALUES ($1, $2, $3, $4)
-RETURNING id
+RETURNING id, path, title, created_at, updated_at, creator_id, outing_id
 `
 
 type CreatePhotoParams struct {
@@ -58,16 +63,44 @@ type CreatePhotoParams struct {
 	OutingID  int32
 }
 
-func (q *Queries) CreatePhoto(ctx context.Context, arg CreatePhotoParams) (int32, error) {
+func (q *Queries) CreatePhoto(ctx context.Context, arg CreatePhotoParams) (Photo, error) {
 	row := q.db.QueryRowContext(ctx, createPhoto,
 		arg.Path,
 		arg.Title,
 		arg.CreatorID,
 		arg.OutingID,
 	)
-	var id int32
-	err := row.Scan(&id)
-	return id, err
+	var i Photo
+	err := row.Scan(
+		&i.ID,
+		&i.Path,
+		&i.Title,
+		&i.CreatedAt,
+		&i.UpdatedAt,
+		&i.CreatorID,
+		&i.OutingID,
+	)
+	return i, err
+}
+
+const getOuting = `-- name: GetOuting :one
+SELECT id, title, date, created_at, updated_at
+from outings
+WHERE id = $1
+LIMIT 1
+`
+
+func (q *Queries) GetOuting(ctx context.Context, id int32) (Outing, error) {
+	row := q.db.QueryRowContext(ctx, getOuting, id)
+	var i Outing
+	err := row.Scan(
+		&i.ID,
+		&i.Title,
+		&i.Date,
+		&i.CreatedAt,
+		&i.UpdatedAt,
+	)
+	return i, err
 }
 
 const listOutings = `-- name: ListOutings :many
@@ -250,4 +283,25 @@ func (q *Queries) UpdatePhoto(ctx context.Context, arg UpdatePhotoParams) (Photo
 		&i.OutingID,
 	)
 	return i, err
+}
+
+const userInOuting = `-- name: UserInOuting :one
+SELECT EXISTS(
+               SELECT 1
+               FROM outing_users
+               WHERE outing_users.outing_id = $1
+                 AND outing_users.user_id = $2
+           )
+`
+
+type UserInOutingParams struct {
+	OutingID int32
+	UserID   int32
+}
+
+func (q *Queries) UserInOuting(ctx context.Context, arg UserInOutingParams) (bool, error) {
+	row := q.db.QueryRowContext(ctx, userInOuting, arg.OutingID, arg.UserID)
+	var exists bool
+	err := row.Scan(&exists)
+	return exists, err
 }

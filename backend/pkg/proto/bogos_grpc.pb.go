@@ -11,6 +11,7 @@ import (
 	grpc "google.golang.org/grpc"
 	codes "google.golang.org/grpc/codes"
 	status "google.golang.org/grpc/status"
+	emptypb "google.golang.org/protobuf/types/known/emptypb"
 )
 
 // This is a compile-time assertion to ensure that this generated file
@@ -23,7 +24,7 @@ const _ = grpc.SupportPackageIsVersion7
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type UsersClient interface {
 	GetJwt(ctx context.Context, in *GetJwtRequest, opts ...grpc.CallOption) (*GetJwtReply, error)
-	GetCurrentUser(ctx context.Context, in *GetCurrentUserRequest, opts ...grpc.CallOption) (*User, error)
+	GetCurrentUser(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*User, error)
 	UpdateCurrentUser(ctx context.Context, in *UpdateCurrentUserRequest, opts ...grpc.CallOption) (*User, error)
 }
 
@@ -44,7 +45,7 @@ func (c *usersClient) GetJwt(ctx context.Context, in *GetJwtRequest, opts ...grp
 	return out, nil
 }
 
-func (c *usersClient) GetCurrentUser(ctx context.Context, in *GetCurrentUserRequest, opts ...grpc.CallOption) (*User, error) {
+func (c *usersClient) GetCurrentUser(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*User, error) {
 	out := new(User)
 	err := c.cc.Invoke(ctx, "/bogos.Users/GetCurrentUser", in, out, opts...)
 	if err != nil {
@@ -67,7 +68,7 @@ func (c *usersClient) UpdateCurrentUser(ctx context.Context, in *UpdateCurrentUs
 // for forward compatibility
 type UsersServer interface {
 	GetJwt(context.Context, *GetJwtRequest) (*GetJwtReply, error)
-	GetCurrentUser(context.Context, *GetCurrentUserRequest) (*User, error)
+	GetCurrentUser(context.Context, *emptypb.Empty) (*User, error)
 	UpdateCurrentUser(context.Context, *UpdateCurrentUserRequest) (*User, error)
 	mustEmbedUnimplementedUsersServer()
 }
@@ -79,7 +80,7 @@ type UnimplementedUsersServer struct {
 func (UnimplementedUsersServer) GetJwt(context.Context, *GetJwtRequest) (*GetJwtReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetJwt not implemented")
 }
-func (UnimplementedUsersServer) GetCurrentUser(context.Context, *GetCurrentUserRequest) (*User, error) {
+func (UnimplementedUsersServer) GetCurrentUser(context.Context, *emptypb.Empty) (*User, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetCurrentUser not implemented")
 }
 func (UnimplementedUsersServer) UpdateCurrentUser(context.Context, *UpdateCurrentUserRequest) (*User, error) {
@@ -117,7 +118,7 @@ func _Users_GetJwt_Handler(srv interface{}, ctx context.Context, dec func(interf
 }
 
 func _Users_GetCurrentUser_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GetCurrentUserRequest)
+	in := new(emptypb.Empty)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -129,7 +130,7 @@ func _Users_GetCurrentUser_Handler(srv interface{}, ctx context.Context, dec fun
 		FullMethod: "/bogos.Users/GetCurrentUser",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(UsersServer).GetCurrentUser(ctx, req.(*GetCurrentUserRequest))
+		return srv.(UsersServer).GetCurrentUser(ctx, req.(*emptypb.Empty))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -180,9 +181,13 @@ var Users_ServiceDesc = grpc.ServiceDesc{
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type OutingsClient interface {
-	ListOutings(ctx context.Context, in *ListOutingsRequest, opts ...grpc.CallOption) (*ListOutingsReply, error)
+	ListOutings(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*ListOutingsReply, error)
 	ListOutingUsers(ctx context.Context, in *ListOutingUsersRequest, opts ...grpc.CallOption) (*ListOutingUsersReply, error)
 	ListOutingPhotos(ctx context.Context, in *ListOutingPhotosRequest, opts ...grpc.CallOption) (*ListOutingPhotosReply, error)
+	CreateOuting(ctx context.Context, in *CreateOutingRequest, opts ...grpc.CallOption) (*Outing, error)
+	UpdateOuting(ctx context.Context, in *UpdateOutingRequest, opts ...grpc.CallOption) (*Outing, error)
+	AddUser(ctx context.Context, in *OutingAddUserRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	RemoveUser(ctx context.Context, in *OutingRemoveUserRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 }
 
 type outingsClient struct {
@@ -193,7 +198,7 @@ func NewOutingsClient(cc grpc.ClientConnInterface) OutingsClient {
 	return &outingsClient{cc}
 }
 
-func (c *outingsClient) ListOutings(ctx context.Context, in *ListOutingsRequest, opts ...grpc.CallOption) (*ListOutingsReply, error) {
+func (c *outingsClient) ListOutings(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*ListOutingsReply, error) {
 	out := new(ListOutingsReply)
 	err := c.cc.Invoke(ctx, "/bogos.Outings/ListOutings", in, out, opts...)
 	if err != nil {
@@ -220,13 +225,53 @@ func (c *outingsClient) ListOutingPhotos(ctx context.Context, in *ListOutingPhot
 	return out, nil
 }
 
+func (c *outingsClient) CreateOuting(ctx context.Context, in *CreateOutingRequest, opts ...grpc.CallOption) (*Outing, error) {
+	out := new(Outing)
+	err := c.cc.Invoke(ctx, "/bogos.Outings/CreateOuting", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *outingsClient) UpdateOuting(ctx context.Context, in *UpdateOutingRequest, opts ...grpc.CallOption) (*Outing, error) {
+	out := new(Outing)
+	err := c.cc.Invoke(ctx, "/bogos.Outings/UpdateOuting", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *outingsClient) AddUser(ctx context.Context, in *OutingAddUserRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, "/bogos.Outings/AddUser", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *outingsClient) RemoveUser(ctx context.Context, in *OutingRemoveUserRequest, opts ...grpc.CallOption) (*emptypb.Empty, error) {
+	out := new(emptypb.Empty)
+	err := c.cc.Invoke(ctx, "/bogos.Outings/RemoveUser", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // OutingsServer is the server API for Outings service.
 // All implementations must embed UnimplementedOutingsServer
 // for forward compatibility
 type OutingsServer interface {
-	ListOutings(context.Context, *ListOutingsRequest) (*ListOutingsReply, error)
+	ListOutings(context.Context, *emptypb.Empty) (*ListOutingsReply, error)
 	ListOutingUsers(context.Context, *ListOutingUsersRequest) (*ListOutingUsersReply, error)
 	ListOutingPhotos(context.Context, *ListOutingPhotosRequest) (*ListOutingPhotosReply, error)
+	CreateOuting(context.Context, *CreateOutingRequest) (*Outing, error)
+	UpdateOuting(context.Context, *UpdateOutingRequest) (*Outing, error)
+	AddUser(context.Context, *OutingAddUserRequest) (*emptypb.Empty, error)
+	RemoveUser(context.Context, *OutingRemoveUserRequest) (*emptypb.Empty, error)
 	mustEmbedUnimplementedOutingsServer()
 }
 
@@ -234,7 +279,7 @@ type OutingsServer interface {
 type UnimplementedOutingsServer struct {
 }
 
-func (UnimplementedOutingsServer) ListOutings(context.Context, *ListOutingsRequest) (*ListOutingsReply, error) {
+func (UnimplementedOutingsServer) ListOutings(context.Context, *emptypb.Empty) (*ListOutingsReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ListOutings not implemented")
 }
 func (UnimplementedOutingsServer) ListOutingUsers(context.Context, *ListOutingUsersRequest) (*ListOutingUsersReply, error) {
@@ -242,6 +287,18 @@ func (UnimplementedOutingsServer) ListOutingUsers(context.Context, *ListOutingUs
 }
 func (UnimplementedOutingsServer) ListOutingPhotos(context.Context, *ListOutingPhotosRequest) (*ListOutingPhotosReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ListOutingPhotos not implemented")
+}
+func (UnimplementedOutingsServer) CreateOuting(context.Context, *CreateOutingRequest) (*Outing, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method CreateOuting not implemented")
+}
+func (UnimplementedOutingsServer) UpdateOuting(context.Context, *UpdateOutingRequest) (*Outing, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdateOuting not implemented")
+}
+func (UnimplementedOutingsServer) AddUser(context.Context, *OutingAddUserRequest) (*emptypb.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method AddUser not implemented")
+}
+func (UnimplementedOutingsServer) RemoveUser(context.Context, *OutingRemoveUserRequest) (*emptypb.Empty, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method RemoveUser not implemented")
 }
 func (UnimplementedOutingsServer) mustEmbedUnimplementedOutingsServer() {}
 
@@ -257,7 +314,7 @@ func RegisterOutingsServer(s grpc.ServiceRegistrar, srv OutingsServer) {
 }
 
 func _Outings_ListOutings_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(ListOutingsRequest)
+	in := new(emptypb.Empty)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -269,7 +326,7 @@ func _Outings_ListOutings_Handler(srv interface{}, ctx context.Context, dec func
 		FullMethod: "/bogos.Outings/ListOutings",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(OutingsServer).ListOutings(ctx, req.(*ListOutingsRequest))
+		return srv.(OutingsServer).ListOutings(ctx, req.(*emptypb.Empty))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -310,6 +367,78 @@ func _Outings_ListOutingPhotos_Handler(srv interface{}, ctx context.Context, dec
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Outings_CreateOuting_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CreateOutingRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(OutingsServer).CreateOuting(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/bogos.Outings/CreateOuting",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(OutingsServer).CreateOuting(ctx, req.(*CreateOutingRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Outings_UpdateOuting_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdateOutingRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(OutingsServer).UpdateOuting(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/bogos.Outings/UpdateOuting",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(OutingsServer).UpdateOuting(ctx, req.(*UpdateOutingRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Outings_AddUser_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(OutingAddUserRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(OutingsServer).AddUser(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/bogos.Outings/AddUser",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(OutingsServer).AddUser(ctx, req.(*OutingAddUserRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Outings_RemoveUser_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(OutingRemoveUserRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(OutingsServer).RemoveUser(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/bogos.Outings/RemoveUser",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(OutingsServer).RemoveUser(ctx, req.(*OutingRemoveUserRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // Outings_ServiceDesc is the grpc.ServiceDesc for Outings service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -328,6 +457,22 @@ var Outings_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "ListOutingPhotos",
 			Handler:    _Outings_ListOutingPhotos_Handler,
+		},
+		{
+			MethodName: "CreateOuting",
+			Handler:    _Outings_CreateOuting_Handler,
+		},
+		{
+			MethodName: "UpdateOuting",
+			Handler:    _Outings_UpdateOuting_Handler,
+		},
+		{
+			MethodName: "AddUser",
+			Handler:    _Outings_AddUser_Handler,
+		},
+		{
+			MethodName: "RemoveUser",
+			Handler:    _Outings_RemoveUser_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

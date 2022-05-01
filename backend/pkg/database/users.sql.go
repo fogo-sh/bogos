@@ -13,7 +13,7 @@ import (
 const createUser = `-- name: CreateUser :one
 INSERT INTO users (username, password_hash, display_name, avatar_url)
 VALUES ($1, $2, $3, $4)
-RETURNING id
+RETURNING id, username, password_hash, display_name, avatar_url, created_at, updated_at
 `
 
 type CreateUserParams struct {
@@ -23,16 +23,46 @@ type CreateUserParams struct {
 	AvatarUrl    sql.NullString
 }
 
-func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) (int32, error) {
+func (q *Queries) CreateUser(ctx context.Context, arg CreateUserParams) (User, error) {
 	row := q.db.QueryRowContext(ctx, createUser,
 		arg.Username,
 		arg.PasswordHash,
 		arg.DisplayName,
 		arg.AvatarUrl,
 	)
-	var id int32
-	err := row.Scan(&id)
-	return id, err
+	var i User
+	err := row.Scan(
+		&i.ID,
+		&i.Username,
+		&i.PasswordHash,
+		&i.DisplayName,
+		&i.AvatarUrl,
+		&i.CreatedAt,
+		&i.UpdatedAt,
+	)
+	return i, err
+}
+
+const getUser = `-- name: GetUser :one
+SELECT id, username, password_hash, display_name, avatar_url, created_at, updated_at
+FROM users
+where id = $1
+LIMIT 1
+`
+
+func (q *Queries) GetUser(ctx context.Context, id int32) (User, error) {
+	row := q.db.QueryRowContext(ctx, getUser, id)
+	var i User
+	err := row.Scan(
+		&i.ID,
+		&i.Username,
+		&i.PasswordHash,
+		&i.DisplayName,
+		&i.AvatarUrl,
+		&i.CreatedAt,
+		&i.UpdatedAt,
+	)
+	return i, err
 }
 
 const getUserByUsername = `-- name: GetUserByUsername :one
