@@ -90,11 +90,6 @@ const fakeData: Outing[] = [
 ];
 
 export const loader: LoaderFunction = async () => {
-  users.GetJwt({ username: "invalid", password: "invalid" }, (error, resp) => {
-    console.log("error", error);
-    console.log("resp", resp);
-  });
-
   const data: LoaderData = fakeData;
   return json(data);
 };

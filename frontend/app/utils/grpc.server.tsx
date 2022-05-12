@@ -1,4 +1,5 @@
 import path from "path";
+import { promisify } from "util";
 import * as grpc from "@grpc/grpc-js";
 import * as protoLoader from "@grpc/proto-loader";
 import type { ProtoGrpcType } from "~/proto/bogos";
@@ -10,7 +11,11 @@ const { bogos } = grpc.loadPackageDefinition(
   packageDefinition
 ) as unknown as ProtoGrpcType;
 
-export const users = new bogos.Users(
+const usersClient = new bogos.Users(
   "localhost:9999",
   grpc.credentials.createInsecure()
 );
+
+export const users = {
+  getJwt: promisify(usersClient.getJwt.bind(usersClient)),
+};
