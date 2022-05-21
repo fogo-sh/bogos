@@ -19,3 +19,16 @@ const usersClient = new bogos.Users(
 export const users = {
   getJwt: promisify(usersClient.getJwt.bind(usersClient)),
 };
+
+const outingsClient = new bogos.Outings(
+  "localhost:9999",
+  grpc.credentials.createInsecure()
+);
+
+export const outings = {
+  listOutings: promisify(outingsClient.listOutings.bind(outingsClient)),
+  listOutingUsers: promisify(outingsClient.listOutingUsers.bind(outingsClient)),
+  listOutingPhotos: promisify(
+    outingsClient.listOutingPhotos.bind(outingsClient)
+  ),
+};
