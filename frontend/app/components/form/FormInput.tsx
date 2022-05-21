@@ -20,7 +20,10 @@ export const FormInput = ({
       <label htmlFor={name} className="mb-2 text-stone-200">
         {label}
       </label>
-      <input {...getInputProps({ id: name, type, accept })} />
+      <input
+        {...getInputProps({ id: name, type, accept })}
+        className="bg-transparent p-1 border border-stone-100 text-stone-100"
+      />
       {error && (
         <span className="text-red-500 italic text-sm mt-1">{error}</span>
       )}
