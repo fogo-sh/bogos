@@ -11,12 +11,15 @@
     "dev:css": "npm run generate:css -- --watch",
     "dev:remix": "cross-env NODE_ENV=development remix dev",
     "generate:css": "npx tailwindcss -i ./styles/tailwind.css -o ./app/tailwind.css",
+    "generate:proto": "proto-loader-gen-types --grpcLib=@grpc/grpc-js --outDir=./app/proto/ ../backend/pkg/proto/*.proto",
     "start": "cross-env NODE_ENV=production remix-serve build"
   },
   "prisma": {
     "seed": "node --require esbuild-register prisma/seed.ts"
   },
   "dependencies": {
+    "@grpc/grpc-js": "^1.6.7",
+    "@grpc/proto-loader": "^0.6.9",
     "@headlessui/react": "^1.5.0",
     "@heroicons/react": "^1.0.6",
     "@remix-run/node": "^1.4.0",
@@ -32,6 +35,7 @@
     "zod-form-data": "^1.2.0"
   },
   "devDependencies": {
+    "ts-proto": "^1.110.4",
     "@remix-run/dev": "^1.4.0",
     "@remix-run/eslint-config": "^1.4.0",
     "@types/react": "^18.0.5",

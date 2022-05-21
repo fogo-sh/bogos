@@ -1,6 +1,7 @@
 import React from "react";
 import type { LinksFunction, MetaFunction } from "@remix-run/node";
 import {
+  Link,
   Links,
   LiveReload,
   Meta,
@@ -30,7 +31,15 @@ function Document({ children }: { children: React.ReactNode }) {
         <Meta />
         <Links />
       </head>
-      <body className="bg-stone-900 p-10">
+      <body className="bg-stone-900 px-10 pb-10 pt-8">
+        <header className="mb-8 flex justify-between">
+          <Link to="/" className="text-stone-100 text-xl">
+            👽 bogos
+          </Link>
+          <Link to="/login" className="text-stone-100 text-xl">
+            login
+          </Link>
+        </header>
         {children}
         <ScrollRestoration />
         <Scripts />
