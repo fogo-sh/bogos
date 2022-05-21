@@ -71,6 +71,9 @@ export default function Login() {
           submitting="logging in..."
         />
       </ValidatedForm>
+      <code className="text-slate-100 overflow-y-auto">
+        reply: <pre>{JSON.stringify(reply, null, 2)}</pre>
+      </code>
     </main>
   );
 }
