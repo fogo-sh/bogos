@@ -95,8 +95,6 @@ export const loader: LoaderFunction = async () => {
 export default function Index() {
   const outings = useLoaderData<LoaderData>();
 
-  console.log(outings);
-
   return (
     <main className="flex flex-col gap-y-10">
       {outings.map((outing) => (

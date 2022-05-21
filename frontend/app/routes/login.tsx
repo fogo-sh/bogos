@@ -58,8 +58,6 @@ export const action: ActionFunction = async ({ request }) => {
 export default function Login() {
   const reply = useActionData();
 
-  console.log({ reply });
-
   return (
     <main className="flex flex-col gap-y-10">
       <ValidatedForm validator={validator} method="post">
