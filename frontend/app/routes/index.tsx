@@ -1,94 +1,13 @@
 import type { LoaderFunction } from "@remix-run/node";
 import { json } from "@remix-run/node";
 import { useLoaderData } from "@remix-run/react";
-import invariant from "tiny-invariant";
-import { outings } from "~/utils/grpc.server";
-
-type User = {
-  id: number;
-  username: string;
-  avatarUrl: string;
-};
-
-type Photo = {
-  id: number;
-  url: string;
-  title?: string;
-};
-
-type Outing = {
-  id: number;
-  title: string;
-  attendees: User[];
-  photos: Photo[];
-};
+import type { Outing } from "~/utils/data.server";
+import { listOutings } from "~/utils/data.server";
 
 type LoaderData = Outing[];
 
 export const loader: LoaderFunction = async () => {
-  const listOutingsResponse = await outings.listOutings({});
-  invariant(listOutingsResponse);
-
-  const listOfOutings = listOutingsResponse.outings;
-  invariant(listOfOutings);
-
-  const data: Outing[] = [];
-
-  for (const outing of listOfOutings) {
-    const outingId = outing.id;
-    invariant(outingId);
-
-    const outingUsersResponse = await outings.listOutingUsers({ outingId });
-    invariant(outingUsersResponse);
-
-    const outingUsers = outingUsersResponse.users;
-    invariant(outingUsers);
-
-    const attendees = outingUsers.map((user) => {
-      const userId = user.id;
-      invariant(userId);
-
-      const username = user.username;
-      invariant(username);
-
-      const avatarUrl = user.avatarUrl;
-      invariant(avatarUrl);
-
-      return {
-        id: userId,
-        username,
-        avatarUrl,
-      };
-    });
-
-    const outingPhotosResponse = await outings.listOutingPhotos({ outingId });
-    invariant(outingPhotosResponse);
-
-    const outingPhotos = outingPhotosResponse.photos;
-    invariant(outingPhotos);
-
-    const photos = outingPhotos.map((photo) => {
-      const photoId = photo.id;
-      invariant(photoId);
-
-      const url = photo.url;
-      invariant(url);
-
-      const title = photo.title;
-
-      return {
-        id: photoId,
-        url,
-        title,
-      };
-    });
-
-    const title = outing.title;
-    invariant(title);
-
-    data.push({ id: outingId, title, attendees, photos });
-  }
-
+  const data = await listOutings();
   return json(data);
 };
 
