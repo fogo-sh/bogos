@@ -1,5 +1,10 @@
 import React from "react";
-import type { LinksFunction, MetaFunction } from "@remix-run/node";
+import type {
+  LinksFunction,
+  LoaderFunction,
+  MetaFunction,
+} from "@remix-run/node";
+import { json } from "@remix-run/node";
 import {
   Link,
   Links,
@@ -9,9 +14,11 @@ import {
   Scripts,
   ScrollRestoration,
   useCatch,
+  useLoaderData,
 } from "@remix-run/react";
 
 import tailwindStyles from "~/tailwind.css";
+import { getSessionDataFromRequest } from "./utils/session.server";
 
 export const links: LinksFunction = () => [
   { rel: "stylesheet", href: tailwindStyles },
@@ -22,7 +29,13 @@ export const meta: MetaFunction = () => {
   return { title: "bogos" };
 };
 
-function Document({ children }: { children: React.ReactNode }) {
+function Document({
+  children,
+  currentUser: { username, avatarUrl } = {},
+}: {
+  children: React.ReactNode;
+  currentUser: { username?: string; avatarUrl?: string };
+}) {
   return (
     <html lang="en">
       <head>
@@ -36,9 +49,20 @@ function Document({ children }: { children: React.ReactNode }) {
           <Link to="/" className="text-stone-100 text-xl">
             👽 bogos
           </Link>
-          <Link to="/login" className="text-stone-100 text-xl">
-            login
-          </Link>
+          {username ? (
+            <div className="flex gap-x-6 items-center">
+              <p className="text-stone-100 text-xl my-0">
+                <span className="opacity-50">logged in as</span> {username} -{" "}
+                <Link to="/logout" className="text-stone-100 text-xl">
+                  logout
+                </Link>
+              </p>
+            </div>
+          ) : (
+            <Link to="/login" className="text-stone-100 text-xl">
+              login
+            </Link>
+          )}
         </header>
         {children}
         <ScrollRestoration />
@@ -49,9 +73,30 @@ function Document({ children }: { children: React.ReactNode }) {
   );
 }
 
+type LoaderData = {
+  username?: string;
+  avatarUrl?: string;
+};
+
+export const loader: LoaderFunction = async ({ request }) => {
+  const sessionData = await getSessionDataFromRequest(request);
+
+  if (sessionData !== null) {
+    const data: LoaderData = {
+      username: sessionData.username,
+      avatarUrl: sessionData.avatarUrl,
+    };
+    return json(data);
+  }
+
+  return json({});
+};
+
 export default function App() {
+  const data = useLoaderData<LoaderData>();
+
   return (
-    <Document>
+    <Document currentUser={data}>
       <Outlet />
     </Document>
   );

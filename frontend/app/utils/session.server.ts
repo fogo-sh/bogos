@@ -6,7 +6,7 @@ const SessionDataSchema = z.object({
   jwt: z.string(),
   userId: z.number(),
   username: z.string(),
-  avatarUrl: z.string(),
+  avatarUrl: z.string().optional(),
 });
 
 type SessionData = z.infer<typeof SessionDataSchema>;
@@ -26,8 +26,11 @@ export function getUserSession(request: Request) {
 
 export async function getSessionDataFromRequest(request: Request) {
   const session = await getUserSession(request);
-  const sessionData = SessionDataSchema.parse(session);
-  return sessionData;
+  try {
+    return SessionDataSchema.parse(session.data);
+  } catch {
+    return null;
+  }
 }
 
 if (!config.site.sessionSecret) {
