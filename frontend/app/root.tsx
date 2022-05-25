@@ -58,6 +58,8 @@ export default function App() {
 }
 
 export function ErrorBoundary({ error }: { error: Error }) {
+  console.error(error);
+
   return (
     <Document>
       <h1 className="text-red-500">Oops, something went wrong!</h1>
@@ -72,6 +74,7 @@ export function ErrorBoundary({ error }: { error: Error }) {
 
 export function CatchBoundary() {
   const caught = useCatch();
+  console.error(caught);
 
   return (
     <Document>

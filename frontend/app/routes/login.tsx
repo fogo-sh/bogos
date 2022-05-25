@@ -1,18 +1,17 @@
 import type { ActionFunction } from "@remix-run/node";
-import { json } from "@remix-run/node";
-import { useActionData } from "@remix-run/react";
 import { withZod } from "@remix-validated-form/with-zod";
 import { ValidatedForm, validationError } from "remix-validated-form";
 import invariant from "tiny-invariant";
 import { z } from "zod";
 import { FormInput } from "~/components/form/FormInput";
 import { SubmitButton } from "~/components/form/SubmitButton";
-import { users } from "~/utils/grpc.server";
+import { usersService } from "~/utils/grpc.server";
+import { createUserSession } from "~/utils/session.server";
 
 export const validator = withZod(
   z.object({
-    username: z.string().nonempty("Username is required"),
-    password: z.string().nonempty("Password is required"),
+    username: z.string().min(1, "Username is required"),
+    password: z.string().min(1, "Password is required"),
   })
 );
 
@@ -25,11 +24,12 @@ export const action: ActionFunction = async ({ request }) => {
 
   const { username, password } = data;
 
-  let reply;
+  let jwt;
 
   try {
-    reply = await users.getJwt({ username, password });
+    jwt = await usersService.getJwt(username, password);
   } catch (error) {
+    console.error(error);
     return validationError(
       {
         fieldErrors: {
@@ -41,18 +41,22 @@ export const action: ActionFunction = async ({ request }) => {
     );
   }
 
-  invariant(reply);
+  const currentUser = await usersService.getCurrentUser(jwt);
 
-  // return createUserSession(user.id, "/");
-
-  return json(reply);
+  return createUserSession(
+    {
+      jwt,
+      userId: currentUser.id,
+      username: currentUser.username,
+      avatarUrl: currentUser.avatarUrl,
+    },
+    "/"
+  );
 };
 
 export default function Login() {
-  const reply = useActionData();
-
   return (
-    <main className="flex flex-col gap-y-10">
+    <main className="flex flex-col gap-y-10 max-w-[20rem] mx-auto">
       <ValidatedForm validator={validator} method="post">
         <FormInput name="username" label="username" />
         <FormInput name="password" label="password" type="password" />
@@ -62,9 +66,6 @@ export default function Login() {
           submitting="logging in..."
         />
       </ValidatedForm>
-      <code className="text-slate-100 overflow-y-auto">
-        reply: <pre>{JSON.stringify(reply, null, 2)}</pre>
-      </code>
     </main>
   );
 }

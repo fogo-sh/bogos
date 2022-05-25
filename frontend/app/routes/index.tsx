@@ -16,6 +16,11 @@ export default function Index() {
 
   return (
     <main className="flex flex-col gap-y-10">
+      {outings.length === 0 && (
+        <p className="text-slate-100 italic text-center opacity-70">
+          No outings
+        </p>
+      )}
       {outings.map((outing) => (
         <div key={outing.id} className="flex flex-col gap-y-4">
           <div className="flex items-center gap-4">
@@ -30,6 +35,11 @@ export default function Index() {
             ))}
           </div>
           <div className="flex flex-wrap gap-4">
+            {outing.photos.length === 0 && (
+              <p className="text-slate-100 italic text-center opacity-70">
+                No photos
+              </p>
+            )}
             {outing.photos.map((photo) => (
               <img key={photo.id} src={photo.url} alt={photo.title} />
             ))}
