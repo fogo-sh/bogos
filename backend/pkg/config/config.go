@@ -16,6 +16,12 @@ type Config struct {
 	LogLevel           string `split_words:"true" default:"debug"`
 	UseJsonLogging     bool   `split_words:"true" default:"false"`
 	JwtSecret          []byte `split_words:"true" default:"bogos-binted"`
+
+	S3AccessKeyId     string `split_words:"true" default:"bogos"`
+	S3SecretAccessKey string `split_words:"true" default:"bogos-binted"`
+	S3Endpoint        string `split_words:"true" default:"http://localhost:9000"`
+	S3BucketName      string `split_words:"true" default:"bogos-bucket"`
+	PhotoUrlFormat    string `split_words:"true" default:"http://localhost:9000/bogos-bucket/%s"`
 }
 
 var loadedConfig *Config

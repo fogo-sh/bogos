@@ -29,10 +29,10 @@ func DBOutingToProtoOuting(outing database.Outing) *Outing {
 	}
 }
 
-func DBPhotoToProtoPhoto(photo database.Photo) *Photo {
+func DBPhotoToProtoPhoto(photo database.Photo, photoUrlFormat string) *Photo {
 	return &Photo{
 		Id:        photo.ID,
-		Url:       fmt.Sprintf("https://picsum.photos/seed/%d/200/300", photo.ID),
+		Url:       fmt.Sprintf(photoUrlFormat, photo.Path),
 		Title:     database.NullStringToPtr(photo.Title),
 		CreatedAt: timestamppb.New(photo.CreatedAt),
 		UpdatedAt: database.NullTimeToTimestamppb(photo.UpdatedAt),

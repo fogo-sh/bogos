@@ -188,6 +188,7 @@ type OutingsClient interface {
 	UpdateOuting(ctx context.Context, in *UpdateOutingRequest, opts ...grpc.CallOption) (*Outing, error)
 	AddUser(ctx context.Context, in *OutingAddUserRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	RemoveUser(ctx context.Context, in *OutingRemoveUserRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	UploadPhoto(ctx context.Context, in *UploadPhotoRequest, opts ...grpc.CallOption) (*UploadPhotoReply, error)
 }
 
 type outingsClient struct {
@@ -261,6 +262,15 @@ func (c *outingsClient) RemoveUser(ctx context.Context, in *OutingRemoveUserRequ
 	return out, nil
 }
 
+func (c *outingsClient) UploadPhoto(ctx context.Context, in *UploadPhotoRequest, opts ...grpc.CallOption) (*UploadPhotoReply, error) {
+	out := new(UploadPhotoReply)
+	err := c.cc.Invoke(ctx, "/bogos.Outings/UploadPhoto", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // OutingsServer is the server API for Outings service.
 // All implementations must embed UnimplementedOutingsServer
 // for forward compatibility
@@ -272,6 +282,7 @@ type OutingsServer interface {
 	UpdateOuting(context.Context, *UpdateOutingRequest) (*Outing, error)
 	AddUser(context.Context, *OutingAddUserRequest) (*emptypb.Empty, error)
 	RemoveUser(context.Context, *OutingRemoveUserRequest) (*emptypb.Empty, error)
+	UploadPhoto(context.Context, *UploadPhotoRequest) (*UploadPhotoReply, error)
 	mustEmbedUnimplementedOutingsServer()
 }
 
@@ -299,6 +310,9 @@ func (UnimplementedOutingsServer) AddUser(context.Context, *OutingAddUserRequest
 }
 func (UnimplementedOutingsServer) RemoveUser(context.Context, *OutingRemoveUserRequest) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method RemoveUser not implemented")
+}
+func (UnimplementedOutingsServer) UploadPhoto(context.Context, *UploadPhotoRequest) (*UploadPhotoReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UploadPhoto not implemented")
 }
 func (UnimplementedOutingsServer) mustEmbedUnimplementedOutingsServer() {}
 
@@ -439,6 +453,24 @@ func _Outings_RemoveUser_Handler(srv interface{}, ctx context.Context, dec func(
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Outings_UploadPhoto_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UploadPhotoRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(OutingsServer).UploadPhoto(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/bogos.Outings/UploadPhoto",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(OutingsServer).UploadPhoto(ctx, req.(*UploadPhotoRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // Outings_ServiceDesc is the grpc.ServiceDesc for Outings service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -473,6 +505,10 @@ var Outings_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "RemoveUser",
 			Handler:    _Outings_RemoveUser_Handler,
+		},
+		{
+			MethodName: "UploadPhoto",
+			Handler:    _Outings_UploadPhoto_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

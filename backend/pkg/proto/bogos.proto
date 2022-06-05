@@ -50,6 +50,7 @@ service Outings {
   rpc UpdateOuting (UpdateOutingRequest) returns (Outing) {}
   rpc AddUser (OutingAddUserRequest) returns (google.protobuf.Empty) {}
   rpc RemoveUser (OutingRemoveUserRequest) returns (google.protobuf.Empty) {}
+  rpc UploadPhoto (UploadPhotoRequest) returns (UploadPhotoReply) {}
 }
 
 message ListOutingsReply {
@@ -95,6 +96,16 @@ message OutingAddUserRequest {
 message OutingRemoveUserRequest {
   int32 outing_id = 1;
   int32 user_id = 2;
+}
+
+message UploadPhotoRequest {
+  string extension = 1;
+  int32 outing_id = 2;
+}
+
+message UploadPhotoReply {
+  string upload_url = 1;
+  Photo photo = 2;
 }
 
 message Outing {
