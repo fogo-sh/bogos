@@ -18,7 +18,7 @@ import {
 } from "@remix-run/react";
 
 import tailwindStyles from "~/tailwind.css";
-import { getSessionDataFromRequest } from "./utils/session.server";
+import { getSessionDataFromRequest } from "~/utils/session.server";
 
 export const links: LinksFunction = () => [
   { rel: "stylesheet", href: tailwindStyles },
@@ -34,7 +34,7 @@ function Document({
   currentUser: { username, avatarUrl } = {},
 }: {
   children: React.ReactNode;
-  currentUser: { username?: string; avatarUrl?: string };
+  currentUser?: { username?: string; avatarUrl?: string };
 }) {
   return (
     <html lang="en">
@@ -49,20 +49,29 @@ function Document({
           <Link to="/" className="text-stone-100 text-xl">
             👽 bogos
           </Link>
-          {username ? (
-            <div className="flex gap-x-6 items-center">
-              <p className="text-stone-100 text-xl my-0">
-                <span className="opacity-50">logged in as</span> {username} -{" "}
-                <Link to="/logout" className="text-stone-100 text-xl">
-                  logout
-                </Link>
-              </p>
-            </div>
-          ) : (
-            <Link to="/login" className="text-stone-100 text-xl">
-              login
+          <div className="flex gap-12">
+            <Link
+              to="/new-outing"
+              className="text-stone-100 text-xl border border-stone-100 rounded-sm pr-3 pl-2.5 py-1"
+            >
+              + new outing
             </Link>
-          )}
+            {username ? (
+              <div className="flex gap-x-6 items-center">
+                <p className="text-stone-100 text-xl my-0">
+                  <span className="opacity-50">logged in as</span> {username}
+                  <span className="mx-2"> - </span>
+                  <Link to="/logout" className="text-stone-100 text-xl">
+                    logout
+                  </Link>
+                </p>
+              </div>
+            ) : (
+              <Link to="/login" className="text-stone-100 text-xl">
+                login
+              </Link>
+            )}
+          </div>
         </header>
         {children}
         <ScrollRestoration />

@@ -1,7 +1,6 @@
 import type { ActionFunction } from "@remix-run/node";
 import { withZod } from "@remix-validated-form/with-zod";
 import { ValidatedForm, validationError } from "remix-validated-form";
-import invariant from "tiny-invariant";
 import { z } from "zod";
 import { FormInput } from "~/components/form/FormInput";
 import { SubmitButton } from "~/components/form/SubmitButton";

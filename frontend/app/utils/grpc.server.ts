@@ -1,6 +1,7 @@
 import path from "path";
 import * as grpc from "@grpc/grpc-js";
 import * as protoLoader from "@grpc/proto-loader";
+import type { Timestamp } from "~/proto/google/protobuf/Timestamp";
 import { z } from "zod";
 import type { ProtoGrpcType } from "~/proto/bogos";
 
@@ -32,8 +33,8 @@ export type Photo = z.infer<typeof PhotoSchema>;
 const OutingSchema = z.object({
   id: z.number(),
   title: z.string(),
-  attendees: z.array(UserSchema),
-  photos: z.array(PhotoSchema),
+  attendees: z.array(UserSchema).default([] as User[]),
+  photos: z.array(PhotoSchema).default([] as Photo[]),
 });
 
 export type Outing = z.infer<typeof OutingSchema>;
@@ -164,8 +165,37 @@ export function listOutingPhotos(outingId: number): Promise<Photo[]> {
   );
 }
 
+export function createOuting(
+  jwt: string,
+  title: string,
+  date: Date
+): Promise<Outing> {
+  const timestamp: Timestamp = { seconds: +date };
+  return new Promise((resolve, reject) =>
+    outingsClient.createOuting(
+      { title, date: timestamp },
+      { credentials: credentialsFromJwt(jwt) },
+      (err, res) => {
+        try {
+          if (err) {
+            reject(err);
+          }
+          if (res) {
+            const outing = OutingSchema.parse(res);
+            resolve(outing);
+          }
+          reject("No error, but also no response");
+        } catch (e) {
+          reject(e);
+        }
+      }
+    )
+  );
+}
+
 export const outingsService = {
   listOutings,
   listOutingUsers,
   listOutingPhotos,
+  createOuting,
 };
