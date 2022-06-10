@@ -3,6 +3,7 @@ import { json } from "@remix-run/node";
 import { useLoaderData } from "@remix-run/react";
 import type { Outing } from "~/utils/grpc.server";
 import { listOutings } from "~/utils/data.server";
+import { Link } from "react-router-dom";
 
 type LoaderData = Outing[];
 
@@ -24,7 +25,9 @@ export default function Index() {
       {outings.map((outing) => (
         <div key={outing.id} className="flex flex-col gap-y-4">
           <div className="flex items-center gap-4">
-            <h1 className="text-stone-100 text-2xl">{outing.title}</h1>
+            <Link to={`/outings/${outing.id}`}>
+              <h1 className="text-stone-100 text-2xl">{outing.title}</h1>
+            </Link>
             {outing.attendees.map((attendee) => (
               <img
                 className="rounded-full h-8"
