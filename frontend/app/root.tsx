@@ -17,11 +17,16 @@ import {
   useLoaderData,
 } from "@remix-run/react";
 
+import uppyStyle from "@uppy/core/dist/style.css";
+import uppyDragDropStyle from "@uppy/drag-drop/dist/style.css";
+
 import tailwindStyles from "~/tailwind.css";
 import { getSessionDataFromRequest } from "~/utils/session.server";
 
 export const links: LinksFunction = () => [
   { rel: "stylesheet", href: tailwindStyles },
+  { rel: "stylesheet", href: uppyStyle },
+  { rel: "stylesheet", href: uppyDragDropStyle },
   { rel: "icon", href: "/favicon.svg" },
 ];
 

@@ -26,6 +26,8 @@
     "@remix-run/react": "^1.5.1",
     "@remix-run/serve": "^1.5.1",
     "@remix-validated-form/with-zod": "^2.0.1",
+    "@uppy/aws-s3": "^2.2.1",
+    "@uppy/react": "^2.2.2",
     "clsx": "^1.1.1",
     "react": "^18.1.0",
     "react-dom": "^18.1.0",
@@ -35,7 +37,6 @@
     "zod-form-data": "^1.2.0"
   },
   "devDependencies": {
-    "ts-proto": "^1.115.4",
     "@remix-run/dev": "^1.5.1",
     "@remix-run/eslint-config": "^1.5.1",
     "@types/react": "^18.0.12",
@@ -46,6 +47,7 @@
     "eslint": "^8.17.0",
     "npm-run-all": "^4.1.5",
     "tailwindcss": "^3.1.1",
+    "ts-proto": "^1.115.4",
     "typescript": "^4.7.3",
     "vite-tsconfig-paths": "^3.5.0"
   },
