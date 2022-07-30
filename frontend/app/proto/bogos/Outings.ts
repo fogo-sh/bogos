@@ -13,6 +13,8 @@ import type { Outing as _bogos_Outing, Outing__Output as _bogos_Outing__Output }
 import type { OutingAddUserRequest as _bogos_OutingAddUserRequest, OutingAddUserRequest__Output as _bogos_OutingAddUserRequest__Output } from '../bogos/OutingAddUserRequest';
 import type { OutingRemoveUserRequest as _bogos_OutingRemoveUserRequest, OutingRemoveUserRequest__Output as _bogos_OutingRemoveUserRequest__Output } from '../bogos/OutingRemoveUserRequest';
 import type { UpdateOutingRequest as _bogos_UpdateOutingRequest, UpdateOutingRequest__Output as _bogos_UpdateOutingRequest__Output } from '../bogos/UpdateOutingRequest';
+import type { UploadPhotoReply as _bogos_UploadPhotoReply, UploadPhotoReply__Output as _bogos_UploadPhotoReply__Output } from '../bogos/UploadPhotoReply';
+import type { UploadPhotoRequest as _bogos_UploadPhotoRequest, UploadPhotoRequest__Output as _bogos_UploadPhotoRequest__Output } from '../bogos/UploadPhotoRequest';
 
 export interface OutingsClient extends grpc.Client {
   AddUser(argument: _bogos_OutingAddUserRequest, metadata: grpc.Metadata, options: grpc.CallOptions, callback: grpc.requestCallback<_google_protobuf_Empty__Output>): grpc.ClientUnaryCall;
@@ -78,6 +80,15 @@ export interface OutingsClient extends grpc.Client {
   updateOuting(argument: _bogos_UpdateOutingRequest, options: grpc.CallOptions, callback: grpc.requestCallback<_bogos_Outing__Output>): grpc.ClientUnaryCall;
   updateOuting(argument: _bogos_UpdateOutingRequest, callback: grpc.requestCallback<_bogos_Outing__Output>): grpc.ClientUnaryCall;
   
+  UploadPhoto(argument: _bogos_UploadPhotoRequest, metadata: grpc.Metadata, options: grpc.CallOptions, callback: grpc.requestCallback<_bogos_UploadPhotoReply__Output>): grpc.ClientUnaryCall;
+  UploadPhoto(argument: _bogos_UploadPhotoRequest, metadata: grpc.Metadata, callback: grpc.requestCallback<_bogos_UploadPhotoReply__Output>): grpc.ClientUnaryCall;
+  UploadPhoto(argument: _bogos_UploadPhotoRequest, options: grpc.CallOptions, callback: grpc.requestCallback<_bogos_UploadPhotoReply__Output>): grpc.ClientUnaryCall;
+  UploadPhoto(argument: _bogos_UploadPhotoRequest, callback: grpc.requestCallback<_bogos_UploadPhotoReply__Output>): grpc.ClientUnaryCall;
+  uploadPhoto(argument: _bogos_UploadPhotoRequest, metadata: grpc.Metadata, options: grpc.CallOptions, callback: grpc.requestCallback<_bogos_UploadPhotoReply__Output>): grpc.ClientUnaryCall;
+  uploadPhoto(argument: _bogos_UploadPhotoRequest, metadata: grpc.Metadata, callback: grpc.requestCallback<_bogos_UploadPhotoReply__Output>): grpc.ClientUnaryCall;
+  uploadPhoto(argument: _bogos_UploadPhotoRequest, options: grpc.CallOptions, callback: grpc.requestCallback<_bogos_UploadPhotoReply__Output>): grpc.ClientUnaryCall;
+  uploadPhoto(argument: _bogos_UploadPhotoRequest, callback: grpc.requestCallback<_bogos_UploadPhotoReply__Output>): grpc.ClientUnaryCall;
+  
 }
 
 export interface OutingsHandlers extends grpc.UntypedServiceImplementation {
@@ -95,6 +106,8 @@ export interface OutingsHandlers extends grpc.UntypedServiceImplementation {
   
   UpdateOuting: grpc.handleUnaryCall<_bogos_UpdateOutingRequest__Output, _bogos_Outing>;
   
+  UploadPhoto: grpc.handleUnaryCall<_bogos_UploadPhotoRequest__Output, _bogos_UploadPhotoReply>;
+  
 }
 
 export interface OutingsDefinition extends grpc.ServiceDefinition {
@@ -105,4 +118,5 @@ export interface OutingsDefinition extends grpc.ServiceDefinition {
   ListOutings: MethodDefinition<_google_protobuf_Empty, _bogos_ListOutingsReply, _google_protobuf_Empty__Output, _bogos_ListOutingsReply__Output>
   RemoveUser: MethodDefinition<_bogos_OutingRemoveUserRequest, _google_protobuf_Empty, _bogos_OutingRemoveUserRequest__Output, _google_protobuf_Empty__Output>
   UpdateOuting: MethodDefinition<_bogos_UpdateOutingRequest, _bogos_Outing, _bogos_UpdateOutingRequest__Output, _bogos_Outing__Output>
+  UploadPhoto: MethodDefinition<_bogos_UploadPhotoRequest, _bogos_UploadPhotoReply, _bogos_UploadPhotoRequest__Output, _bogos_UploadPhotoReply__Output>
 }

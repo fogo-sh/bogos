@@ -25,6 +25,8 @@ export interface ProtoGrpcType {
     Photo: MessageTypeDefinition
     UpdateCurrentUserRequest: MessageTypeDefinition
     UpdateOutingRequest: MessageTypeDefinition
+    UploadPhotoReply: MessageTypeDefinition
+    UploadPhotoRequest: MessageTypeDefinition
     User: MessageTypeDefinition
     Users: SubtypeConstructor<typeof grpc.Client, _bogos_UsersClient> & { service: _bogos_UsersDefinition }
   }

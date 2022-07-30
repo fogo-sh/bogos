@@ -39,6 +39,12 @@ const OutingSchema = z.object({
 
 export type Outing = z.infer<typeof OutingSchema>;
 
+const UploadPhotoReplySchema = z.object({
+  uploadUrl: z.string(),
+});
+
+export type UploadPhotoReply = z.infer<typeof UploadPhotoReplySchema>;
+
 function credentialsFromJwt(jwt: string): grpc.CallCredentials {
   const credentials = grpc.credentials.createFromMetadataGenerator(
     (_args, callback) => {
@@ -193,9 +199,37 @@ export function createOuting(
   );
 }
 
+export function uploadPhoto(
+  jwt: string,
+  extension: string,
+  outingId: number
+): Promise<UploadPhotoReply> {
+  return new Promise((resolve, reject) =>
+    outingsClient.uploadPhoto(
+      { extension, outingId },
+      { credentials: credentialsFromJwt(jwt) },
+      (err, res) => {
+        try {
+          if (err) {
+            reject(err);
+          }
+          if (res) {
+            const uploadPhotoReply = UploadPhotoReplySchema.parse(res);
+            resolve(uploadPhotoReply);
+          }
+          reject("No error, but also no response");
+        } catch (e) {
+          reject(e);
+        }
+      }
+    )
+  );
+}
+
 export const outingsService = {
   listOutings,
   listOutingUsers,
   listOutingPhotos,
   createOuting,
+  uploadPhoto,
 };
