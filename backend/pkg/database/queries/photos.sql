@@ -1,7 +1,6 @@
 -- name: CreatePhoto :one
 INSERT INTO photos (path, title, creator_id, outing_id)
-VALUES ($1, $2, $3, $4)
-    RETURNING *;
+VALUES ($1, $2, $3, $4) RETURNING *;
 
 -- name: ListPhotosForOuting :many
 SELECT *
@@ -12,5 +11,9 @@ WHERE outing_id = $1;
 UPDATE photos
 SET title      = $1,
     updated_at = NOW()
-WHERE id = $2
-    RETURNING *;
+WHERE id = $2 RETURNING *;
+
+-- name: ListUserPhotos :many
+SELECT *
+from photos
+WHERE creator_id = $1;

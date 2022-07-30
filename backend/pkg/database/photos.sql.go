@@ -12,8 +12,7 @@ import (
 
 const createPhoto = `-- name: CreatePhoto :one
 INSERT INTO photos (path, title, creator_id, outing_id)
-VALUES ($1, $2, $3, $4)
-    RETURNING id, path, title, created_at, updated_at, creator_id, outing_id
+VALUES ($1, $2, $3, $4) RETURNING id, path, title, created_at, updated_at, creator_id, outing_id
 `
 
 type CreatePhotoParams struct {
@@ -80,12 +79,48 @@ func (q *Queries) ListPhotosForOuting(ctx context.Context, outingID int32) ([]Ph
 	return items, nil
 }
 
+const listUserPhotos = `-- name: ListUserPhotos :many
+SELECT id, path, title, created_at, updated_at, creator_id, outing_id
+from photos
+WHERE creator_id = $1
+`
+
+func (q *Queries) ListUserPhotos(ctx context.Context, creatorID int32) ([]Photo, error) {
+	rows, err := q.db.QueryContext(ctx, listUserPhotos, creatorID)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []Photo
+	for rows.Next() {
+		var i Photo
+		if err := rows.Scan(
+			&i.ID,
+			&i.Path,
+			&i.Title,
+			&i.CreatedAt,
+			&i.UpdatedAt,
+			&i.CreatorID,
+			&i.OutingID,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
 const updatePhoto = `-- name: UpdatePhoto :one
 UPDATE photos
 SET title      = $1,
     updated_at = NOW()
-WHERE id = $2
-    RETURNING id, path, title, created_at, updated_at, creator_id, outing_id
+WHERE id = $2 RETURNING id, path, title, created_at, updated_at, creator_id, outing_id
 `
 
 type UpdatePhotoParams struct {

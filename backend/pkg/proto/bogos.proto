@@ -113,6 +113,8 @@ message Outing {
 
 service Photos {
   rpc ListOutingPhotos (ListOutingPhotosRequest) returns (ListOutingPhotosReply) {}
+  rpc ListUserPhotos (ListUserPhotosRequest) returns (ListUserPhotosReply) {}
+
   rpc UploadPhoto (UploadPhotoRequest) returns (UploadPhotoReply) {}
 }
 
@@ -121,6 +123,14 @@ message ListOutingPhotosRequest {
 }
 
 message ListOutingPhotosReply {
+  repeated Photo photos = 1;
+}
+
+message ListUserPhotosRequest {
+  int32 user_id = 1;
+}
+
+message ListUserPhotosReply {
   repeated Photo photos = 1;
 }
 

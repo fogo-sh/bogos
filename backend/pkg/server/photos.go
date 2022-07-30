@@ -46,6 +46,25 @@ func (p *photosService) ListOutingPhotos(ctx context.Context, request *proto.Lis
 	return &proto.ListOutingPhotosReply{Photos: resp}, nil
 }
 
+func (p *photosService) ListUserPhotos(ctx context.Context, request *proto.ListUserPhotosRequest) (*proto.ListUserPhotosReply, error) {
+	var resp []*proto.Photo
+
+	photos, err := p.server.db.ListUserPhotos(ctx, request.UserId)
+	if err != nil {
+		p.logger.Error().Err(err).Str("operation", "ListUserPhotos").Msg("Error listing photos")
+		return nil, status.Error(codes.Internal, "")
+	}
+
+	for _, photo := range photos {
+		resp = append(
+			resp,
+			proto.DBPhotoToProtoPhoto(photo, p.server.config.PhotoUrlFormat),
+		)
+	}
+
+	return &proto.ListUserPhotosReply{Photos: resp}, nil
+}
+
 func (p *photosService) UploadPhoto(ctx context.Context, request *proto.UploadPhotoRequest) (*proto.UploadPhotoReply, error) {
 	currentUser, err := p.server.authorize(ctx)
 	if err != nil {

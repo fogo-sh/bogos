@@ -520,6 +520,7 @@ var Outings_ServiceDesc = grpc.ServiceDesc{
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type PhotosClient interface {
 	ListOutingPhotos(ctx context.Context, in *ListOutingPhotosRequest, opts ...grpc.CallOption) (*ListOutingPhotosReply, error)
+	ListUserPhotos(ctx context.Context, in *ListUserPhotosRequest, opts ...grpc.CallOption) (*ListUserPhotosReply, error)
 	UploadPhoto(ctx context.Context, in *UploadPhotoRequest, opts ...grpc.CallOption) (*UploadPhotoReply, error)
 }
 
@@ -540,6 +541,15 @@ func (c *photosClient) ListOutingPhotos(ctx context.Context, in *ListOutingPhoto
 	return out, nil
 }
 
+func (c *photosClient) ListUserPhotos(ctx context.Context, in *ListUserPhotosRequest, opts ...grpc.CallOption) (*ListUserPhotosReply, error) {
+	out := new(ListUserPhotosReply)
+	err := c.cc.Invoke(ctx, "/bogos.Photos/ListUserPhotos", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *photosClient) UploadPhoto(ctx context.Context, in *UploadPhotoRequest, opts ...grpc.CallOption) (*UploadPhotoReply, error) {
 	out := new(UploadPhotoReply)
 	err := c.cc.Invoke(ctx, "/bogos.Photos/UploadPhoto", in, out, opts...)
@@ -554,6 +564,7 @@ func (c *photosClient) UploadPhoto(ctx context.Context, in *UploadPhotoRequest, 
 // for forward compatibility
 type PhotosServer interface {
 	ListOutingPhotos(context.Context, *ListOutingPhotosRequest) (*ListOutingPhotosReply, error)
+	ListUserPhotos(context.Context, *ListUserPhotosRequest) (*ListUserPhotosReply, error)
 	UploadPhoto(context.Context, *UploadPhotoRequest) (*UploadPhotoReply, error)
 	mustEmbedUnimplementedPhotosServer()
 }
@@ -564,6 +575,9 @@ type UnimplementedPhotosServer struct {
 
 func (UnimplementedPhotosServer) ListOutingPhotos(context.Context, *ListOutingPhotosRequest) (*ListOutingPhotosReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ListOutingPhotos not implemented")
+}
+func (UnimplementedPhotosServer) ListUserPhotos(context.Context, *ListUserPhotosRequest) (*ListUserPhotosReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ListUserPhotos not implemented")
 }
 func (UnimplementedPhotosServer) UploadPhoto(context.Context, *UploadPhotoRequest) (*UploadPhotoReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UploadPhoto not implemented")
@@ -599,6 +613,24 @@ func _Photos_ListOutingPhotos_Handler(srv interface{}, ctx context.Context, dec 
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Photos_ListUserPhotos_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListUserPhotosRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PhotosServer).ListUserPhotos(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/bogos.Photos/ListUserPhotos",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PhotosServer).ListUserPhotos(ctx, req.(*ListUserPhotosRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _Photos_UploadPhoto_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(UploadPhotoRequest)
 	if err := dec(in); err != nil {
@@ -627,6 +659,10 @@ var Photos_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "ListOutingPhotos",
 			Handler:    _Photos_ListOutingPhotos_Handler,
+		},
+		{
+			MethodName: "ListUserPhotos",
+			Handler:    _Photos_ListUserPhotos_Handler,
 		},
 		{
 			MethodName: "UploadPhoto",
