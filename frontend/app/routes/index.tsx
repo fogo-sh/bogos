@@ -3,6 +3,7 @@ import { json } from "@remix-run/node";
 import { useLoaderData, Link } from "@remix-run/react";
 import type { Outing } from "~/utils/grpc.server";
 import { listOutings } from "~/utils/data.server";
+import { PlusCircleIcon } from "@heroicons/react/solid";
 
 type LoaderData = Outing[];
 
@@ -17,7 +18,9 @@ export default function Index() {
   return (
     <main className="flex flex-col gap-y-10">
       <Link to="/create-outing">
-        <button className="button">create outing</button>
+        <button className="button flex items-center gap-x-2">
+          <PlusCircleIcon className="h-3" /> create outing
+        </button>
       </Link>
       {outings.length === 0 && (
         <p className="text-stone-100 italic text-center opacity-70">
