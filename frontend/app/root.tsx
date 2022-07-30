@@ -6,7 +6,6 @@ import type {
 } from "@remix-run/node";
 import { json } from "@remix-run/node";
 import {
-  Link,
   Links,
   LiveReload,
   Meta,
@@ -19,6 +18,7 @@ import {
 
 import tailwindStyles from "~/tailwind.css";
 import { getSessionDataFromRequest } from "~/utils/session.server";
+import { Header } from "./components/Header";
 
 export const links: LinksFunction = () => [
   { rel: "stylesheet", href: tailwindStyles },
@@ -31,7 +31,7 @@ export const meta: MetaFunction = () => {
 
 function Document({
   children,
-  currentUser: { username, avatarUrl } = {},
+  currentUser,
 }: {
   children: React.ReactNode;
   currentUser?: { username?: string; avatarUrl?: string };
@@ -45,34 +45,7 @@ function Document({
         <Links />
       </head>
       <body className="bg-stone-900 px-10 pb-10 pt-8">
-        <header className="mb-8 flex justify-between">
-          <Link to="/" className="text-stone-100 text-xl">
-            👽 bogos
-          </Link>
-          <div className="flex gap-12">
-            <Link
-              to="/new-outing"
-              className="text-stone-100 text-xl border border-stone-100 rounded-sm pr-3 pl-2.5 py-1"
-            >
-              + new outing
-            </Link>
-            {username ? (
-              <div className="flex gap-x-6 items-center">
-                <p className="text-stone-100 text-xl my-0">
-                  <span className="opacity-50">logged in as</span> {username}
-                  <span className="mx-2"> - </span>
-                  <Link to="/logout" className="text-stone-100 text-xl">
-                    logout
-                  </Link>
-                </p>
-              </div>
-            ) : (
-              <Link to="/login" className="text-stone-100 text-xl">
-                login
-              </Link>
-            )}
-          </div>
-        </header>
+        <Header currentUser={currentUser} />
         {children}
         <ScrollRestoration />
         <Scripts />
@@ -117,7 +90,7 @@ export function ErrorBoundary({ error }: { error: Error }) {
   return (
     <Document>
       <h1 className="text-red-500">Oops, something went wrong!</h1>
-      <div className="px-3 py-2 border rounded-md  mt-4 bg-slate-50">
+      <div className="px-3 py-2 border rounded-md  mt-4 bg-stone-50">
         <pre className="text-red-500 font-semibold whitespace-pre-wrap">
           {error.message}
         </pre>

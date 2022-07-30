@@ -168,7 +168,7 @@ export default function UploadPhoto() {
             onClick={handleUpload}
             disabled={fetcher.state !== "idle"}
           >
-            Upload
+            upload
           </button>
         </>
       )}

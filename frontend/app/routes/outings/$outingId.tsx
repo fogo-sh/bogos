@@ -37,7 +37,7 @@ export default function OutingPage() {
                 to="./upload-photos"
                 className="text-stone-100 text-xl border border-stone-100 rounded-sm pr-3 pl-2.5 py-1 flex items-center gap-2"
               >
-                <PhotographIcon className="text-slate-100 h-4 w-4" />
+                <PhotographIcon className="text-stone-100 h-4 w-4" />
                 upload photos
               </Link>
             </div>
@@ -52,7 +52,7 @@ export default function OutingPage() {
           </div>
           <div className="flex flex-wrap gap-4">
             {outing.photos.length === 0 && (
-              <p className="text-slate-100 italic text-center opacity-70">
+              <p className="text-stone-100 italic text-center opacity-70">
                 No photos
               </p>
             )}

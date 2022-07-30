@@ -31,7 +31,7 @@ export function Modal({
           <div className="inline-block w-full max-w-md p-6 my-8 overflow-hidden text-left align-middle bg-stone-800 transform">
             <Dialog.Title
               as="h3"
-              className="text-lg font-semibold leading-6 text-slate-100"
+              className="text-lg font-semibold leading-6 text-stone-100"
             >
               {title}
             </Dialog.Title>

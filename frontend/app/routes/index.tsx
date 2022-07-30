@@ -16,8 +16,11 @@ export default function Index() {
 
   return (
     <main className="flex flex-col gap-y-10">
+      <Link to="/create-outing">
+        <button className="button">create outing</button>
+      </Link>
       {outings.length === 0 && (
-        <p className="text-slate-100 italic text-center opacity-70">
+        <p className="text-stone-100 italic text-center opacity-70">
           No outings
         </p>
       )}
@@ -38,7 +41,7 @@ export default function Index() {
           </div>
           <div className="flex flex-wrap gap-4">
             {outing.photos.length === 0 && (
-              <p className="text-slate-100 italic text-center opacity-70">
+              <p className="text-stone-100 italic text-center opacity-70">
                 No photos
               </p>
             )}
