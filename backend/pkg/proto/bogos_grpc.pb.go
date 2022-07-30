@@ -184,6 +184,7 @@ type OutingsClient interface {
 	ListOutings(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*ListOutingsReply, error)
 	ListOutingUsers(ctx context.Context, in *ListOutingUsersRequest, opts ...grpc.CallOption) (*ListOutingUsersReply, error)
 	ListOutingPhotos(ctx context.Context, in *ListOutingPhotosRequest, opts ...grpc.CallOption) (*ListOutingPhotosReply, error)
+	GetOuting(ctx context.Context, in *GetOutingRequest, opts ...grpc.CallOption) (*Outing, error)
 	CreateOuting(ctx context.Context, in *CreateOutingRequest, opts ...grpc.CallOption) (*Outing, error)
 	UpdateOuting(ctx context.Context, in *UpdateOutingRequest, opts ...grpc.CallOption) (*Outing, error)
 	AddUser(ctx context.Context, in *OutingAddUserRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
@@ -220,6 +221,15 @@ func (c *outingsClient) ListOutingUsers(ctx context.Context, in *ListOutingUsers
 func (c *outingsClient) ListOutingPhotos(ctx context.Context, in *ListOutingPhotosRequest, opts ...grpc.CallOption) (*ListOutingPhotosReply, error) {
 	out := new(ListOutingPhotosReply)
 	err := c.cc.Invoke(ctx, "/bogos.Outings/ListOutingPhotos", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *outingsClient) GetOuting(ctx context.Context, in *GetOutingRequest, opts ...grpc.CallOption) (*Outing, error) {
+	out := new(Outing)
+	err := c.cc.Invoke(ctx, "/bogos.Outings/GetOuting", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -278,6 +288,7 @@ type OutingsServer interface {
 	ListOutings(context.Context, *emptypb.Empty) (*ListOutingsReply, error)
 	ListOutingUsers(context.Context, *ListOutingUsersRequest) (*ListOutingUsersReply, error)
 	ListOutingPhotos(context.Context, *ListOutingPhotosRequest) (*ListOutingPhotosReply, error)
+	GetOuting(context.Context, *GetOutingRequest) (*Outing, error)
 	CreateOuting(context.Context, *CreateOutingRequest) (*Outing, error)
 	UpdateOuting(context.Context, *UpdateOutingRequest) (*Outing, error)
 	AddUser(context.Context, *OutingAddUserRequest) (*emptypb.Empty, error)
@@ -298,6 +309,9 @@ func (UnimplementedOutingsServer) ListOutingUsers(context.Context, *ListOutingUs
 }
 func (UnimplementedOutingsServer) ListOutingPhotos(context.Context, *ListOutingPhotosRequest) (*ListOutingPhotosReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ListOutingPhotos not implemented")
+}
+func (UnimplementedOutingsServer) GetOuting(context.Context, *GetOutingRequest) (*Outing, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetOuting not implemented")
 }
 func (UnimplementedOutingsServer) CreateOuting(context.Context, *CreateOutingRequest) (*Outing, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateOuting not implemented")
@@ -377,6 +391,24 @@ func _Outings_ListOutingPhotos_Handler(srv interface{}, ctx context.Context, dec
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(OutingsServer).ListOutingPhotos(ctx, req.(*ListOutingPhotosRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Outings_GetOuting_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetOutingRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(OutingsServer).GetOuting(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/bogos.Outings/GetOuting",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(OutingsServer).GetOuting(ctx, req.(*GetOutingRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -489,6 +521,10 @@ var Outings_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "ListOutingPhotos",
 			Handler:    _Outings_ListOutingPhotos_Handler,
+		},
+		{
+			MethodName: "GetOuting",
+			Handler:    _Outings_GetOuting_Handler,
 		},
 		{
 			MethodName: "CreateOuting",
