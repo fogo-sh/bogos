@@ -183,13 +183,11 @@ var Users_ServiceDesc = grpc.ServiceDesc{
 type OutingsClient interface {
 	ListOutings(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*ListOutingsReply, error)
 	ListOutingUsers(ctx context.Context, in *ListOutingUsersRequest, opts ...grpc.CallOption) (*ListOutingUsersReply, error)
-	ListOutingPhotos(ctx context.Context, in *ListOutingPhotosRequest, opts ...grpc.CallOption) (*ListOutingPhotosReply, error)
 	GetOuting(ctx context.Context, in *GetOutingRequest, opts ...grpc.CallOption) (*Outing, error)
 	CreateOuting(ctx context.Context, in *CreateOutingRequest, opts ...grpc.CallOption) (*Outing, error)
 	UpdateOuting(ctx context.Context, in *UpdateOutingRequest, opts ...grpc.CallOption) (*Outing, error)
 	AddUser(ctx context.Context, in *OutingAddUserRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
 	RemoveUser(ctx context.Context, in *OutingRemoveUserRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
-	UploadPhoto(ctx context.Context, in *UploadPhotoRequest, opts ...grpc.CallOption) (*UploadPhotoReply, error)
 }
 
 type outingsClient struct {
@@ -212,15 +210,6 @@ func (c *outingsClient) ListOutings(ctx context.Context, in *emptypb.Empty, opts
 func (c *outingsClient) ListOutingUsers(ctx context.Context, in *ListOutingUsersRequest, opts ...grpc.CallOption) (*ListOutingUsersReply, error) {
 	out := new(ListOutingUsersReply)
 	err := c.cc.Invoke(ctx, "/bogos.Outings/ListOutingUsers", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *outingsClient) ListOutingPhotos(ctx context.Context, in *ListOutingPhotosRequest, opts ...grpc.CallOption) (*ListOutingPhotosReply, error) {
-	out := new(ListOutingPhotosReply)
-	err := c.cc.Invoke(ctx, "/bogos.Outings/ListOutingPhotos", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -272,28 +261,17 @@ func (c *outingsClient) RemoveUser(ctx context.Context, in *OutingRemoveUserRequ
 	return out, nil
 }
 
-func (c *outingsClient) UploadPhoto(ctx context.Context, in *UploadPhotoRequest, opts ...grpc.CallOption) (*UploadPhotoReply, error) {
-	out := new(UploadPhotoReply)
-	err := c.cc.Invoke(ctx, "/bogos.Outings/UploadPhoto", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
 // OutingsServer is the server API for Outings service.
 // All implementations must embed UnimplementedOutingsServer
 // for forward compatibility
 type OutingsServer interface {
 	ListOutings(context.Context, *emptypb.Empty) (*ListOutingsReply, error)
 	ListOutingUsers(context.Context, *ListOutingUsersRequest) (*ListOutingUsersReply, error)
-	ListOutingPhotos(context.Context, *ListOutingPhotosRequest) (*ListOutingPhotosReply, error)
 	GetOuting(context.Context, *GetOutingRequest) (*Outing, error)
 	CreateOuting(context.Context, *CreateOutingRequest) (*Outing, error)
 	UpdateOuting(context.Context, *UpdateOutingRequest) (*Outing, error)
 	AddUser(context.Context, *OutingAddUserRequest) (*emptypb.Empty, error)
 	RemoveUser(context.Context, *OutingRemoveUserRequest) (*emptypb.Empty, error)
-	UploadPhoto(context.Context, *UploadPhotoRequest) (*UploadPhotoReply, error)
 	mustEmbedUnimplementedOutingsServer()
 }
 
@@ -306,9 +284,6 @@ func (UnimplementedOutingsServer) ListOutings(context.Context, *emptypb.Empty) (
 }
 func (UnimplementedOutingsServer) ListOutingUsers(context.Context, *ListOutingUsersRequest) (*ListOutingUsersReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ListOutingUsers not implemented")
-}
-func (UnimplementedOutingsServer) ListOutingPhotos(context.Context, *ListOutingPhotosRequest) (*ListOutingPhotosReply, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method ListOutingPhotos not implemented")
 }
 func (UnimplementedOutingsServer) GetOuting(context.Context, *GetOutingRequest) (*Outing, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetOuting not implemented")
@@ -324,9 +299,6 @@ func (UnimplementedOutingsServer) AddUser(context.Context, *OutingAddUserRequest
 }
 func (UnimplementedOutingsServer) RemoveUser(context.Context, *OutingRemoveUserRequest) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method RemoveUser not implemented")
-}
-func (UnimplementedOutingsServer) UploadPhoto(context.Context, *UploadPhotoRequest) (*UploadPhotoReply, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method UploadPhoto not implemented")
 }
 func (UnimplementedOutingsServer) mustEmbedUnimplementedOutingsServer() {}
 
@@ -373,24 +345,6 @@ func _Outings_ListOutingUsers_Handler(srv interface{}, ctx context.Context, dec 
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(OutingsServer).ListOutingUsers(ctx, req.(*ListOutingUsersRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _Outings_ListOutingPhotos_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(ListOutingPhotosRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(OutingsServer).ListOutingPhotos(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/bogos.Outings/ListOutingPhotos",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(OutingsServer).ListOutingPhotos(ctx, req.(*ListOutingPhotosRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -485,24 +439,6 @@ func _Outings_RemoveUser_Handler(srv interface{}, ctx context.Context, dec func(
 	return interceptor(ctx, in, info, handler)
 }
 
-func _Outings_UploadPhoto_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(UploadPhotoRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(OutingsServer).UploadPhoto(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/bogos.Outings/UploadPhoto",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(OutingsServer).UploadPhoto(ctx, req.(*UploadPhotoRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
 // Outings_ServiceDesc is the grpc.ServiceDesc for Outings service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -517,10 +453,6 @@ var Outings_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "ListOutingUsers",
 			Handler:    _Outings_ListOutingUsers_Handler,
-		},
-		{
-			MethodName: "ListOutingPhotos",
-			Handler:    _Outings_ListOutingPhotos_Handler,
 		},
 		{
 			MethodName: "GetOuting",
@@ -542,9 +474,127 @@ var Outings_ServiceDesc = grpc.ServiceDesc{
 			MethodName: "RemoveUser",
 			Handler:    _Outings_RemoveUser_Handler,
 		},
+	},
+	Streams:  []grpc.StreamDesc{},
+	Metadata: "pkg/proto/bogos.proto",
+}
+
+// PhotosClient is the client API for Photos service.
+//
+// For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
+type PhotosClient interface {
+	ListOutingPhotos(ctx context.Context, in *ListOutingPhotosRequest, opts ...grpc.CallOption) (*ListOutingPhotosReply, error)
+	UploadPhoto(ctx context.Context, in *UploadPhotoRequest, opts ...grpc.CallOption) (*UploadPhotoReply, error)
+}
+
+type photosClient struct {
+	cc grpc.ClientConnInterface
+}
+
+func NewPhotosClient(cc grpc.ClientConnInterface) PhotosClient {
+	return &photosClient{cc}
+}
+
+func (c *photosClient) ListOutingPhotos(ctx context.Context, in *ListOutingPhotosRequest, opts ...grpc.CallOption) (*ListOutingPhotosReply, error) {
+	out := new(ListOutingPhotosReply)
+	err := c.cc.Invoke(ctx, "/bogos.Photos/ListOutingPhotos", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *photosClient) UploadPhoto(ctx context.Context, in *UploadPhotoRequest, opts ...grpc.CallOption) (*UploadPhotoReply, error) {
+	out := new(UploadPhotoReply)
+	err := c.cc.Invoke(ctx, "/bogos.Photos/UploadPhoto", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+// PhotosServer is the server API for Photos service.
+// All implementations must embed UnimplementedPhotosServer
+// for forward compatibility
+type PhotosServer interface {
+	ListOutingPhotos(context.Context, *ListOutingPhotosRequest) (*ListOutingPhotosReply, error)
+	UploadPhoto(context.Context, *UploadPhotoRequest) (*UploadPhotoReply, error)
+	mustEmbedUnimplementedPhotosServer()
+}
+
+// UnimplementedPhotosServer must be embedded to have forward compatible implementations.
+type UnimplementedPhotosServer struct {
+}
+
+func (UnimplementedPhotosServer) ListOutingPhotos(context.Context, *ListOutingPhotosRequest) (*ListOutingPhotosReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ListOutingPhotos not implemented")
+}
+func (UnimplementedPhotosServer) UploadPhoto(context.Context, *UploadPhotoRequest) (*UploadPhotoReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UploadPhoto not implemented")
+}
+func (UnimplementedPhotosServer) mustEmbedUnimplementedPhotosServer() {}
+
+// UnsafePhotosServer may be embedded to opt out of forward compatibility for this service.
+// Use of this interface is not recommended, as added methods to PhotosServer will
+// result in compilation errors.
+type UnsafePhotosServer interface {
+	mustEmbedUnimplementedPhotosServer()
+}
+
+func RegisterPhotosServer(s grpc.ServiceRegistrar, srv PhotosServer) {
+	s.RegisterService(&Photos_ServiceDesc, srv)
+}
+
+func _Photos_ListOutingPhotos_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListOutingPhotosRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PhotosServer).ListOutingPhotos(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/bogos.Photos/ListOutingPhotos",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PhotosServer).ListOutingPhotos(ctx, req.(*ListOutingPhotosRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Photos_UploadPhoto_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UploadPhotoRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PhotosServer).UploadPhoto(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/bogos.Photos/UploadPhoto",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PhotosServer).UploadPhoto(ctx, req.(*UploadPhotoRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+// Photos_ServiceDesc is the grpc.ServiceDesc for Photos service.
+// It's only intended for direct use with grpc.RegisterService,
+// and not to be introspected or modified (even as a copy)
+var Photos_ServiceDesc = grpc.ServiceDesc{
+	ServiceName: "bogos.Photos",
+	HandlerType: (*PhotosServer)(nil),
+	Methods: []grpc.MethodDesc{
+		{
+			MethodName: "ListOutingPhotos",
+			Handler:    _Photos_ListOutingPhotos_Handler,
+		},
 		{
 			MethodName: "UploadPhoto",
-			Handler:    _Outings_UploadPhoto_Handler,
+			Handler:    _Photos_UploadPhoto_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
