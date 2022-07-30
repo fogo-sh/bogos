@@ -43,7 +43,12 @@ export default function Index() {
               </p>
             )}
             {outing.photos.map((photo) => (
-              <img key={photo.id} src={photo.url} alt={photo.title} />
+              <img
+                key={photo.id}
+                src={photo.url}
+                alt={photo.title}
+                className="h-64 w-64 object-cover"
+              />
             ))}
           </div>
         </div>
