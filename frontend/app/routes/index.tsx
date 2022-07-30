@@ -1,9 +1,8 @@
 import type { LoaderFunction } from "@remix-run/node";
 import { json } from "@remix-run/node";
-import { useLoaderData } from "@remix-run/react";
+import { useLoaderData, Link } from "@remix-run/react";
 import type { Outing } from "~/utils/grpc.server";
 import { listOutings } from "~/utils/data.server";
-import { Link } from "react-router-dom";
 
 type LoaderData = Outing[];
 
