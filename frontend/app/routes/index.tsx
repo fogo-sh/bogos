@@ -16,9 +16,9 @@ export default function Index() {
   const outings = useLoaderData<LoaderData>();
 
   return (
-    <main className="flex flex-col gap-y-10">
+    <main className="flex flex-col gap-y-4">
       <Link to="/create-outing">
-        <button className="button flex items-center gap-x-2">
+        <button className="button">
           <PlusCircleIcon className="h-3" /> create outing
         </button>
       </Link>
@@ -28,10 +28,15 @@ export default function Index() {
         </p>
       )}
       {outings.map((outing) => (
-        <div key={outing.id} className="flex flex-col gap-y-4">
+        <div
+          key={outing.id}
+          className="flex flex-col gap-y-4 my-4 first-of-type:mt-4"
+        >
           <div className="flex items-center gap-4">
             <Link to={`/outings/${outing.id}`}>
-              <h1 className="text-stone-100 text-2xl">{outing.title}</h1>
+              <h1 className="text-stone-300 text-3xl underline hover:text-stone-50">
+                {outing.title}
+              </h1>
             </Link>
             {outing.attendees.map((attendee) => (
               <img

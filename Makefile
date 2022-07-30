@@ -1,3 +1,5 @@
+pg_connection_string := postgresql://bogos:bogos-binted@127.0.0.1:5432/bogos
+
 up:
 	tilt up
 
@@ -11,7 +13,7 @@ delete-cluster:
 	ctlptl delete cluster kind-kind
 
 pgcli:
-	pgcli postgres://bogos:bogos-binted@127.0.0.1:5432/bogos
+	pgcli $(pg_connection_string)
 
 backend-run:
 	( cd backend && go run main.go run )

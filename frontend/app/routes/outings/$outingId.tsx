@@ -5,26 +5,36 @@ import invariant from "tiny-invariant";
 import { PhotographIcon } from "@heroicons/react/solid";
 import type { Outing } from "~/utils/grpc.server";
 import { listOutings } from "~/utils/data.server";
+import { getSessionDataFromRequest } from "~/utils/session.server";
 
-type LoaderData = Outing;
+type LoaderData = {
+  outing: Outing;
+  isLoggedIn: boolean;
+};
 
-export const loader: LoaderFunction = async ({ params }) => {
+export const loader: LoaderFunction = async ({ request, params }) => {
   const outingId = params.outingId;
   invariant(outingId, "outingId is required");
 
-  // TODO route that fetches specific outing rather than fetching all here
   const outings = await listOutings();
   const outing = outings.find((outing) => outing.id === Number(outingId));
+
+  const sessionData = await getSessionDataFromRequest(request);
 
   if (!outing) {
     throw new Error(`No outing found with id ${outingId}`);
   }
 
-  return json(outing);
+  const data: LoaderData = {
+    outing,
+    isLoggedIn: sessionData !== null,
+  };
+
+  return json(data);
 };
 
 export default function OutingPage() {
-  const outing = useLoaderData<LoaderData>();
+  const { outing, isLoggedIn } = useLoaderData<LoaderData>();
 
   return (
     <>
@@ -33,13 +43,6 @@ export default function OutingPage() {
           <div className="flex items-center gap-4">
             <div className="flex items-center gap-x-8">
               <h1 className="text-stone-100 text-2xl">{outing.title}</h1>
-              <Link
-                to="./upload-photos"
-                className="text-stone-100 text-xl border border-stone-100 rounded-sm pr-3 pl-2.5 py-1 flex items-center gap-2"
-              >
-                <PhotographIcon className="text-stone-100 h-4 w-4" />
-                upload photos
-              </Link>
             </div>
             {outing.attendees.map((attendee) => (
               <img
@@ -50,9 +53,17 @@ export default function OutingPage() {
               />
             ))}
           </div>
+          {isLoggedIn && (
+            <Link to="./upload-photos">
+              <button className="button">
+                <PhotographIcon className="text-stone-100 h-4 w-4" />
+                upload photos
+              </button>
+            </Link>
+          )}
           <div className="flex flex-wrap gap-4">
             {outing.photos.length === 0 && (
-              <p className="text-stone-100 italic text-center opacity-70">
+              <p className="text-stone-300 italic text-center opacity-70">
                 No photos
               </p>
             )}

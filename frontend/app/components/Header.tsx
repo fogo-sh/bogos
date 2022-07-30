@@ -5,7 +5,7 @@ import { ChevronDownIcon } from "@heroicons/react/solid";
 function LoginDropdown({ username }: { username: string }) {
   return (
     <Menu as="div" className="relative inline-block">
-      <Menu.Button className="button flex items-center gap-x-2">
+      <Menu.Button className="button">
         {username} <ChevronDownIcon className="h-4" />
       </Menu.Button>
       <Menu.Items className="absolute right-0 mt-1 origin-top-right flex flex-col bg-stone-900 text-stone-100 border border-stone-100 rounded">

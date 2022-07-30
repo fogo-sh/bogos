@@ -4,8 +4,6 @@ import * as protoLoader from "@grpc/proto-loader";
 import type { Timestamp } from "~/proto/google/protobuf/Timestamp";
 import { z } from "zod";
 import type { ProtoGrpcType } from "~/proto/bogos";
-import { UsersClient } from "~/proto/bogos/Users";
-import { OutingsClient } from "~/proto/bogos/Outings";
 
 const PROTO_PATH = path.join(__dirname, "../../backend/pkg/proto/bogos.proto");
 
