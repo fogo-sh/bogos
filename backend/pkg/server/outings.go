@@ -125,6 +125,20 @@ func (o *outingsService) ListOutingUsers(ctx context.Context, request *proto.Lis
 	return &proto.ListOutingUsersReply{Users: resp}, nil
 }
 
+func (o *outingsService) GetOuting(ctx context.Context, request *proto.GetOutingRequest) (*proto.Outing, error) {
+	outing, err := o.server.db.GetOuting(ctx, request.OutingId)
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return nil, status.Error(codes.NotFound, "no outing with that ID found")
+		} else {
+			o.logger.Error().Str("operation", "GetOuting").Err(err).Msg("Error getting outing")
+			return nil, status.Error(codes.Internal, "")
+		}
+	}
+
+	return proto.DBOutingToProtoOuting(outing), nil
+}
+
 func (o *outingsService) AddUser(ctx context.Context, request *proto.OutingAddUserRequest) (*emptypb.Empty, error) {
 	_, err := o.server.authorize(ctx)
 	if err != nil {
