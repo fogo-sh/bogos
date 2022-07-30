@@ -7,7 +7,6 @@ package database
 
 import (
 	"context"
-	"database/sql"
 	"time"
 )
 
@@ -46,39 +45,6 @@ func (q *Queries) CreateOuting(ctx context.Context, arg CreateOutingParams) (Out
 		&i.Date,
 		&i.CreatedAt,
 		&i.UpdatedAt,
-	)
-	return i, err
-}
-
-const createPhoto = `-- name: CreatePhoto :one
-INSERT INTO photos (path, title, creator_id, outing_id)
-VALUES ($1, $2, $3, $4)
-RETURNING id, path, title, created_at, updated_at, creator_id, outing_id
-`
-
-type CreatePhotoParams struct {
-	Path      string
-	Title     sql.NullString
-	CreatorID int32
-	OutingID  int32
-}
-
-func (q *Queries) CreatePhoto(ctx context.Context, arg CreatePhotoParams) (Photo, error) {
-	row := q.db.QueryRowContext(ctx, createPhoto,
-		arg.Path,
-		arg.Title,
-		arg.CreatorID,
-		arg.OutingID,
-	)
-	var i Photo
-	err := row.Scan(
-		&i.ID,
-		&i.Path,
-		&i.Title,
-		&i.CreatedAt,
-		&i.UpdatedAt,
-		&i.CreatorID,
-		&i.OutingID,
 	)
 	return i, err
 }
@@ -137,29 +103,28 @@ func (q *Queries) ListOutings(ctx context.Context) ([]Outing, error) {
 	return items, nil
 }
 
-const listPhotosForOuting = `-- name: ListPhotosForOuting :many
-SELECT id, path, title, created_at, updated_at, creator_id, outing_id
-from photos
-WHERE outing_id = $1
+const listUserOutings = `-- name: ListUserOutings :many
+SELECT outings.id, outings.title, outings.date, outings.created_at, outings.updated_at
+FROM outings
+         JOIN outing_users ou on outings.id = ou.outing_id
+WHERE ou.user_id = $1
 `
 
-func (q *Queries) ListPhotosForOuting(ctx context.Context, outingID int32) ([]Photo, error) {
-	rows, err := q.db.QueryContext(ctx, listPhotosForOuting, outingID)
+func (q *Queries) ListUserOutings(ctx context.Context, userID int32) ([]Outing, error) {
+	rows, err := q.db.QueryContext(ctx, listUserOutings, userID)
 	if err != nil {
 		return nil, err
 	}
 	defer rows.Close()
-	var items []Photo
+	var items []Outing
 	for rows.Next() {
-		var i Photo
+		var i Outing
 		if err := rows.Scan(
 			&i.ID,
-			&i.Path,
 			&i.Title,
+			&i.Date,
 			&i.CreatedAt,
 			&i.UpdatedAt,
-			&i.CreatorID,
-			&i.OutingID,
 		); err != nil {
 			return nil, err
 		}
@@ -253,34 +218,6 @@ func (q *Queries) UpdateOuting(ctx context.Context, arg UpdateOutingParams) (Out
 		&i.Date,
 		&i.CreatedAt,
 		&i.UpdatedAt,
-	)
-	return i, err
-}
-
-const updatePhoto = `-- name: UpdatePhoto :one
-UPDATE photos
-SET title      = $1,
-    updated_at = NOW()
-WHERE id = $2
-RETURNING id, path, title, created_at, updated_at, creator_id, outing_id
-`
-
-type UpdatePhotoParams struct {
-	Title sql.NullString
-	ID    int32
-}
-
-func (q *Queries) UpdatePhoto(ctx context.Context, arg UpdatePhotoParams) (Photo, error) {
-	row := q.db.QueryRowContext(ctx, updatePhoto, arg.Title, arg.ID)
-	var i Photo
-	err := row.Scan(
-		&i.ID,
-		&i.Path,
-		&i.Title,
-		&i.CreatedAt,
-		&i.UpdatedAt,
-		&i.CreatorID,
-		&i.OutingID,
 	)
 	return i, err
 }

@@ -45,6 +45,7 @@ service Outings {
   rpc ListOutings (google.protobuf.Empty) returns (ListOutingsReply) {}
   rpc ListOutingUsers (ListOutingUsersRequest) returns (ListOutingUsersReply) {}
   rpc GetOuting (GetOutingRequest) returns (Outing) {}
+  rpc ListUserOutings (ListUserOutingsRequest) returns (ListUserOutingsReply) {}
 
   rpc CreateOuting (CreateOutingRequest) returns (Outing) {}
   rpc UpdateOuting (UpdateOutingRequest) returns (Outing) {}
@@ -66,6 +67,14 @@ message ListOutingUsersReply {
 
 message GetOutingRequest {
   int32 outing_id = 1;
+}
+
+message ListUserOutingsRequest {
+  int32 user_id = 1;
+}
+
+message ListUserOutingsReply {
+  repeated Outing outings = 1;
 }
 
 message CreateOutingRequest {

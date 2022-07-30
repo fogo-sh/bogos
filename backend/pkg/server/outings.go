@@ -74,7 +74,7 @@ func (o *outingsService) UpdateOuting(ctx context.Context, request *proto.Update
 
 	newOuting, err := o.server.db.UpdateOuting(ctx, updateParams)
 	if err != nil {
-		log.Error().Str("operation", "UpdateOuting").Err(err).Msg("Error updating outing")
+		o.logger.Error().Str("operation", "UpdateOuting").Err(err).Msg("Error updating outing")
 		return nil, status.Error(codes.Internal, "")
 	}
 
@@ -86,7 +86,7 @@ func (o *outingsService) ListOutings(ctx context.Context, _ *emptypb.Empty) (*pr
 
 	outings, err := o.server.db.ListOutings(ctx)
 	if err != nil {
-		log.Error().Str("operation", "ListOutings").Err(err).Msg("Error listing outings")
+		o.logger.Error().Str("operation", "ListOutings").Err(err).Msg("Error listing outings")
 		return nil, status.Error(codes.Internal, "")
 	}
 
@@ -105,7 +105,7 @@ func (o *outingsService) ListOutingUsers(ctx context.Context, request *proto.Lis
 
 	outingUsers, err := o.server.db.ListUsersForOuting(ctx, request.OutingId)
 	if err != nil {
-		log.Error().Str("operation", "ListOutingUsers").Err(err).Msg("Error listing users for outing")
+		o.logger.Error().Str("operation", "ListOutingUsers").Err(err).Msg("Error listing users for outing")
 		return nil, status.Error(codes.Internal, "")
 	}
 
@@ -131,6 +131,22 @@ func (o *outingsService) GetOuting(ctx context.Context, request *proto.GetOuting
 	}
 
 	return proto.DBOutingToProtoOuting(outing), nil
+}
+
+func (o *outingsService) ListUserOutings(ctx context.Context, request *proto.ListUserOutingsRequest) (*proto.ListUserOutingsReply, error) {
+	var resp []*proto.Outing
+
+	outings, err := o.server.db.ListUserOutings(ctx, request.UserId)
+	if err != nil {
+		o.logger.Error().Str("operation", "ListUserOutings").Err(err).Msg("Error listing outings")
+		return nil, status.Error(codes.Internal, "")
+	}
+
+	for _, outing := range outings {
+		resp = append(resp, proto.DBOutingToProtoOuting(outing))
+	}
+
+	return &proto.ListUserOutingsReply{Outings: resp}, nil
 }
 
 func (o *outingsService) AddUser(ctx context.Context, request *proto.OutingAddUserRequest) (*emptypb.Empty, error) {
