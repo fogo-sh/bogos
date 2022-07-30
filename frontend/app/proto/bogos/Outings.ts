@@ -4,6 +4,7 @@ import type * as grpc from '@grpc/grpc-js'
 import type { MethodDefinition } from '@grpc/proto-loader'
 import type { CreateOutingRequest as _bogos_CreateOutingRequest, CreateOutingRequest__Output as _bogos_CreateOutingRequest__Output } from '../bogos/CreateOutingRequest';
 import type { Empty as _google_protobuf_Empty, Empty__Output as _google_protobuf_Empty__Output } from '../google/protobuf/Empty';
+import type { GetOutingRequest as _bogos_GetOutingRequest, GetOutingRequest__Output as _bogos_GetOutingRequest__Output } from '../bogos/GetOutingRequest';
 import type { ListOutingPhotosReply as _bogos_ListOutingPhotosReply, ListOutingPhotosReply__Output as _bogos_ListOutingPhotosReply__Output } from '../bogos/ListOutingPhotosReply';
 import type { ListOutingPhotosRequest as _bogos_ListOutingPhotosRequest, ListOutingPhotosRequest__Output as _bogos_ListOutingPhotosRequest__Output } from '../bogos/ListOutingPhotosRequest';
 import type { ListOutingUsersReply as _bogos_ListOutingUsersReply, ListOutingUsersReply__Output as _bogos_ListOutingUsersReply__Output } from '../bogos/ListOutingUsersReply';
@@ -34,6 +35,15 @@ export interface OutingsClient extends grpc.Client {
   createOuting(argument: _bogos_CreateOutingRequest, metadata: grpc.Metadata, callback: grpc.requestCallback<_bogos_Outing__Output>): grpc.ClientUnaryCall;
   createOuting(argument: _bogos_CreateOutingRequest, options: grpc.CallOptions, callback: grpc.requestCallback<_bogos_Outing__Output>): grpc.ClientUnaryCall;
   createOuting(argument: _bogos_CreateOutingRequest, callback: grpc.requestCallback<_bogos_Outing__Output>): grpc.ClientUnaryCall;
+  
+  GetOuting(argument: _bogos_GetOutingRequest, metadata: grpc.Metadata, options: grpc.CallOptions, callback: grpc.requestCallback<_bogos_Outing__Output>): grpc.ClientUnaryCall;
+  GetOuting(argument: _bogos_GetOutingRequest, metadata: grpc.Metadata, callback: grpc.requestCallback<_bogos_Outing__Output>): grpc.ClientUnaryCall;
+  GetOuting(argument: _bogos_GetOutingRequest, options: grpc.CallOptions, callback: grpc.requestCallback<_bogos_Outing__Output>): grpc.ClientUnaryCall;
+  GetOuting(argument: _bogos_GetOutingRequest, callback: grpc.requestCallback<_bogos_Outing__Output>): grpc.ClientUnaryCall;
+  getOuting(argument: _bogos_GetOutingRequest, metadata: grpc.Metadata, options: grpc.CallOptions, callback: grpc.requestCallback<_bogos_Outing__Output>): grpc.ClientUnaryCall;
+  getOuting(argument: _bogos_GetOutingRequest, metadata: grpc.Metadata, callback: grpc.requestCallback<_bogos_Outing__Output>): grpc.ClientUnaryCall;
+  getOuting(argument: _bogos_GetOutingRequest, options: grpc.CallOptions, callback: grpc.requestCallback<_bogos_Outing__Output>): grpc.ClientUnaryCall;
+  getOuting(argument: _bogos_GetOutingRequest, callback: grpc.requestCallback<_bogos_Outing__Output>): grpc.ClientUnaryCall;
   
   ListOutingPhotos(argument: _bogos_ListOutingPhotosRequest, metadata: grpc.Metadata, options: grpc.CallOptions, callback: grpc.requestCallback<_bogos_ListOutingPhotosReply__Output>): grpc.ClientUnaryCall;
   ListOutingPhotos(argument: _bogos_ListOutingPhotosRequest, metadata: grpc.Metadata, callback: grpc.requestCallback<_bogos_ListOutingPhotosReply__Output>): grpc.ClientUnaryCall;
@@ -96,6 +106,8 @@ export interface OutingsHandlers extends grpc.UntypedServiceImplementation {
   
   CreateOuting: grpc.handleUnaryCall<_bogos_CreateOutingRequest__Output, _bogos_Outing>;
   
+  GetOuting: grpc.handleUnaryCall<_bogos_GetOutingRequest__Output, _bogos_Outing>;
+  
   ListOutingPhotos: grpc.handleUnaryCall<_bogos_ListOutingPhotosRequest__Output, _bogos_ListOutingPhotosReply>;
   
   ListOutingUsers: grpc.handleUnaryCall<_bogos_ListOutingUsersRequest__Output, _bogos_ListOutingUsersReply>;
@@ -113,6 +125,7 @@ export interface OutingsHandlers extends grpc.UntypedServiceImplementation {
 export interface OutingsDefinition extends grpc.ServiceDefinition {
   AddUser: MethodDefinition<_bogos_OutingAddUserRequest, _google_protobuf_Empty, _bogos_OutingAddUserRequest__Output, _google_protobuf_Empty__Output>
   CreateOuting: MethodDefinition<_bogos_CreateOutingRequest, _bogos_Outing, _bogos_CreateOutingRequest__Output, _bogos_Outing__Output>
+  GetOuting: MethodDefinition<_bogos_GetOutingRequest, _bogos_Outing, _bogos_GetOutingRequest__Output, _bogos_Outing__Output>
   ListOutingPhotos: MethodDefinition<_bogos_ListOutingPhotosRequest, _bogos_ListOutingPhotosReply, _bogos_ListOutingPhotosRequest__Output, _bogos_ListOutingPhotosReply__Output>
   ListOutingUsers: MethodDefinition<_bogos_ListOutingUsersRequest, _bogos_ListOutingUsersReply, _bogos_ListOutingUsersRequest__Output, _bogos_ListOutingUsersReply__Output>
   ListOutings: MethodDefinition<_google_protobuf_Empty, _bogos_ListOutingsReply, _google_protobuf_Empty__Output, _bogos_ListOutingsReply__Output>

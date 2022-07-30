@@ -11,20 +11,18 @@ import {
 import React, { useEffect, useRef, useState } from "react";
 import invariant from "tiny-invariant";
 import { Modal } from "~/components/Modal";
-import { listOutings } from "~/utils/data.server";
+import { getOuting } from "~/utils/grpc.server";
 import type { Outing } from "~/utils/grpc.server";
 import { uploadPhoto } from "~/utils/grpc.server";
 import { getSessionDataFromRequest } from "~/utils/session.server";
 
 type LoaderData = Outing;
 
-export const loader: LoaderFunction = async ({ request, params }) => {
+export const loader: LoaderFunction = async ({ params }) => {
   const outingId = params.outingId;
   invariant(outingId, "outingId is required");
 
-  // TODO grpc endpoint to fetches specific outing rather than fetching all here
-  const outings = await listOutings();
-  const outing = outings.find((outing) => outing.id === Number(outingId));
+  const outing = await getOuting(Number(outingId));
 
   return json(outing);
 };

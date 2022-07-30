@@ -4,6 +4,8 @@ import * as protoLoader from "@grpc/proto-loader";
 import type { Timestamp } from "~/proto/google/protobuf/Timestamp";
 import { z } from "zod";
 import type { ProtoGrpcType } from "~/proto/bogos";
+import { UsersClient } from "~/proto/bogos/Users";
+import { OutingsClient } from "~/proto/bogos/Outings";
 
 const PROTO_PATH = path.join(__dirname, "../../backend/pkg/proto/bogos.proto");
 
@@ -109,6 +111,25 @@ const outingsClient = new bogos.Outings(
   "localhost:9999",
   grpc.credentials.createInsecure()
 );
+
+export function getOuting(outingId: number): Promise<Outing> {
+  return new Promise((resolve, reject) =>
+    outingsClient.getOuting({ outingId }, (err, res) => {
+      try {
+        if (err) {
+          reject(err);
+        }
+        if (res) {
+          const outing = OutingSchema.parse(res);
+          resolve(outing);
+        }
+        reject("No error, but also no response");
+      } catch (e) {
+        reject(e);
+      }
+    })
+  );
+}
 
 export function listOutings(): Promise<Outing[]> {
   return new Promise((resolve, reject) =>
@@ -230,6 +251,7 @@ export const outingsService = {
   listOutings,
   listOutingUsers,
   listOutingPhotos,
+  getOuting,
   createOuting,
   uploadPhoto,
 };

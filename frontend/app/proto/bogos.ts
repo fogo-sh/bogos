@@ -13,6 +13,7 @@ export interface ProtoGrpcType {
     CreateOutingRequest: MessageTypeDefinition
     GetJwtReply: MessageTypeDefinition
     GetJwtRequest: MessageTypeDefinition
+    GetOutingRequest: MessageTypeDefinition
     ListOutingPhotosReply: MessageTypeDefinition
     ListOutingPhotosRequest: MessageTypeDefinition
     ListOutingUsersReply: MessageTypeDefinition
