@@ -42,6 +42,39 @@ func (q *Queries) CreatePhoto(ctx context.Context, arg CreatePhotoParams) (Photo
 	return i, err
 }
 
+const deletePhoto = `-- name: DeletePhoto :exec
+DELETE
+FROM photos
+WHERE id = $1
+`
+
+func (q *Queries) DeletePhoto(ctx context.Context, id int32) error {
+	_, err := q.db.ExecContext(ctx, deletePhoto, id)
+	return err
+}
+
+const getPhoto = `-- name: GetPhoto :one
+SELECT id, path, title, created_at, updated_at, creator_id, outing_id
+from photos
+WHERE id = $1
+LIMIT 1
+`
+
+func (q *Queries) GetPhoto(ctx context.Context, id int32) (Photo, error) {
+	row := q.db.QueryRowContext(ctx, getPhoto, id)
+	var i Photo
+	err := row.Scan(
+		&i.ID,
+		&i.Path,
+		&i.Title,
+		&i.CreatedAt,
+		&i.UpdatedAt,
+		&i.CreatorID,
+		&i.OutingID,
+	)
+	return i, err
+}
+
 const listPhotosForOuting = `-- name: ListPhotosForOuting :many
 SELECT id, path, title, created_at, updated_at, creator_id, outing_id
 from photos

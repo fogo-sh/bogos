@@ -116,6 +116,7 @@ service Photos {
   rpc ListUserPhotos (ListUserPhotosRequest) returns (ListUserPhotosReply) {}
 
   rpc UploadPhoto (UploadPhotoRequest) returns (UploadPhotoReply) {}
+  rpc DeletePhoto (DeletePhotoRequest) returns (google.protobuf.Empty) {}
 }
 
 message ListOutingPhotosRequest {
@@ -142,6 +143,10 @@ message UploadPhotoRequest {
 message UploadPhotoReply {
   string upload_url = 1;
   Photo photo = 2;
+}
+
+message DeletePhotoRequest {
+  int32 photo_id = 1;
 }
 
 message Photo {

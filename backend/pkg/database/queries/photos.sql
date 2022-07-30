@@ -17,3 +17,14 @@ WHERE id = $2 RETURNING *;
 SELECT *
 from photos
 WHERE creator_id = $1;
+
+-- name: GetPhoto :one
+SELECT *
+from photos
+WHERE id = $1
+LIMIT 1;
+
+-- name: DeletePhoto :exec
+DELETE
+FROM photos
+WHERE id = $1;

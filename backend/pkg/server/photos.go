@@ -14,14 +14,17 @@ import (
 	"github.com/rs/zerolog/log"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
+	"google.golang.org/protobuf/types/known/emptypb"
 
 	"github.com/fogo-sh/bogos/backend/pkg/database"
 	"github.com/fogo-sh/bogos/backend/pkg/proto"
 )
 
 type photosService struct {
-	server        *Server
-	logger        zerolog.Logger
+	server *Server
+	logger zerolog.Logger
+
+	s3Client      *s3.Client
 	presignClient *s3.PresignClient
 
 	proto.UnimplementedPhotosServer
@@ -113,6 +116,42 @@ func (p *photosService) UploadPhoto(ctx context.Context, request *proto.UploadPh
 	}, nil
 }
 
+func (p *photosService) DeletePhoto(ctx context.Context, request *proto.DeletePhotoRequest) (*emptypb.Empty, error) {
+	_, err := p.server.authorize(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	photo, err := p.server.db.GetPhoto(ctx, request.PhotoId)
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return nil, status.Error(codes.NotFound, "no photo with that ID found")
+		}
+		p.logger.Error().Err(err).Str("operation", "DeletePhoto").Msg("Error getting photo to delete")
+		return nil, status.Error(codes.Internal, "")
+	}
+
+	err = p.server.db.DeletePhoto(ctx, request.PhotoId)
+	if err != nil {
+		p.logger.Error().Err(err).Str("operation", "DeletePhoto").Msg("Error deleting photo from database")
+		return nil, status.Error(codes.Internal, "")
+	}
+
+	_, err = p.s3Client.DeleteObject(
+		ctx,
+		&s3.DeleteObjectInput{
+			Bucket: aws.String(p.server.config.S3BucketName),
+			Key:    aws.String(photo.Path),
+		},
+	)
+	if err != nil {
+		p.logger.Error().Err(err).Str("operation", "DeletePhoto").Msg("Error deleting photo from S3")
+		return nil, status.Error(codes.Internal, "")
+	}
+
+	return &emptypb.Empty{}, nil
+}
+
 func newPhotosService(server *Server) *photosService {
 	config := aws.Config{
 		Credentials: credentials.NewStaticCredentialsProvider(server.config.S3AccessKeyId, server.config.S3SecretAccessKey, ""),
@@ -128,11 +167,14 @@ func newPhotosService(server *Server) *photosService {
 			}, nil
 		}),
 	}
-	presignClient := s3.NewPresignClient(s3.NewFromConfig(config))
+
+	s3Client := s3.NewFromConfig(config)
+	presignClient := s3.NewPresignClient(s3Client)
 
 	return &photosService{
 		server:        server,
 		logger:        log.With().Str("service", "photos").Logger(),
+		s3Client:      s3Client,
 		presignClient: presignClient,
 	}
 }
