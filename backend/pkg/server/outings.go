@@ -4,12 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"errors"
-	"fmt"
 
-	"github.com/aws/aws-sdk-go-v2/aws"
-	"github.com/aws/aws-sdk-go-v2/credentials"
-	"github.com/aws/aws-sdk-go-v2/service/s3"
-	"github.com/google/uuid"
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
 	"google.golang.org/grpc/codes"
@@ -21,9 +16,8 @@ import (
 )
 
 type outingsService struct {
-	server        *Server
-	logger        zerolog.Logger
-	presignClient *s3.PresignClient
+	server *Server
+	logger zerolog.Logger
 
 	proto.UnimplementedOutingsServer
 }
@@ -80,7 +74,7 @@ func (o *outingsService) UpdateOuting(ctx context.Context, request *proto.Update
 
 	newOuting, err := o.server.db.UpdateOuting(ctx, updateParams)
 	if err != nil {
-		log.Error().Str("operation", "UpdateOuting").Err(err).Msg("Error updating outing")
+		o.logger.Error().Str("operation", "UpdateOuting").Err(err).Msg("Error updating outing")
 		return nil, status.Error(codes.Internal, "")
 	}
 
@@ -92,7 +86,7 @@ func (o *outingsService) ListOutings(ctx context.Context, _ *emptypb.Empty) (*pr
 
 	outings, err := o.server.db.ListOutings(ctx)
 	if err != nil {
-		log.Error().Str("operation", "ListOutings").Err(err).Msg("Error listing outings")
+		o.logger.Error().Str("operation", "ListOutings").Err(err).Msg("Error listing outings")
 		return nil, status.Error(codes.Internal, "")
 	}
 
@@ -111,7 +105,7 @@ func (o *outingsService) ListOutingUsers(ctx context.Context, request *proto.Lis
 
 	outingUsers, err := o.server.db.ListUsersForOuting(ctx, request.OutingId)
 	if err != nil {
-		log.Error().Str("operation", "ListOutingUsers").Err(err).Msg("Error listing users for outing")
+		o.logger.Error().Str("operation", "ListOutingUsers").Err(err).Msg("Error listing users for outing")
 		return nil, status.Error(codes.Internal, "")
 	}
 
@@ -137,6 +131,22 @@ func (o *outingsService) GetOuting(ctx context.Context, request *proto.GetOuting
 	}
 
 	return proto.DBOutingToProtoOuting(outing), nil
+}
+
+func (o *outingsService) ListUserOutings(ctx context.Context, request *proto.ListUserOutingsRequest) (*proto.ListUserOutingsReply, error) {
+	var resp []*proto.Outing
+
+	outings, err := o.server.db.ListUserOutings(ctx, request.UserId)
+	if err != nil {
+		o.logger.Error().Str("operation", "ListUserOutings").Err(err).Msg("Error listing outings")
+		return nil, status.Error(codes.Internal, "")
+	}
+
+	for _, outing := range outings {
+		resp = append(resp, proto.DBOutingToProtoOuting(outing))
+	}
+
+	return &proto.ListUserOutingsReply{Outings: resp}, nil
 }
 
 func (o *outingsService) AddUser(ctx context.Context, request *proto.OutingAddUserRequest) (*emptypb.Empty, error) {
@@ -198,93 +208,9 @@ func (o *outingsService) RemoveUser(ctx context.Context, request *proto.OutingRe
 	return &emptypb.Empty{}, nil
 }
 
-func (o *outingsService) ListOutingPhotos(ctx context.Context, request *proto.ListOutingPhotosRequest) (*proto.ListOutingPhotosReply, error) {
-	var resp []*proto.Photo
-
-	photos, err := o.server.db.ListPhotosForOuting(ctx, request.OutingId)
-	if err != nil {
-		o.logger.Error().Err(err).Str("operation", "ListOutingPhotos").Msg("Error listing photos for outing")
-		return nil, status.Error(codes.Internal, "")
-	}
-
-	for _, photo := range photos {
-		resp = append(
-			resp,
-			proto.DBPhotoToProtoPhoto(photo, o.server.config.PhotoUrlFormat),
-		)
-	}
-
-	return &proto.ListOutingPhotosReply{Photos: resp}, nil
-}
-
-func (o *outingsService) UploadPhoto(ctx context.Context, request *proto.UploadPhotoRequest) (*proto.UploadPhotoReply, error) {
-	currentUser, err := o.server.authorize(ctx)
-	if err != nil {
-		return nil, err
-	}
-
-	_, err = o.server.db.GetOuting(ctx, request.OutingId)
-	if err != nil {
-		if errors.Is(err, sql.ErrNoRows) {
-			return nil, status.Error(codes.NotFound, "no outing with that ID found")
-		} else {
-			o.logger.Error().Str("operation", "UploadPhoto").Err(err).Msg("Error getting outing")
-			return nil, status.Error(codes.Internal, "")
-		}
-	}
-
-	photoPath := fmt.Sprintf(
-		"%d/%s.%s",
-		request.OutingId,
-		uuid.NewString(),
-		request.Extension,
-	)
-
-	presignedRequest, err := o.presignClient.PresignPutObject(ctx, &s3.PutObjectInput{
-		Bucket: aws.String(o.server.config.S3BucketName),
-		Key:    aws.String(photoPath),
-	})
-	if err != nil {
-		log.Error().Err(err).Str("operation", "UploadPhoto").Msg("Error presigning URL")
-		return nil, status.Error(codes.Internal, "")
-	}
-
-	photo, err := o.server.db.CreatePhoto(ctx, database.CreatePhotoParams{
-		Path:      photoPath,
-		CreatorID: currentUser.ID,
-		OutingID:  request.OutingId,
-	})
-	if err != nil {
-		o.logger.Error().Err(err).Str("operation", "UploadPhoto").Msg("Error inserting new photo")
-		return nil, status.Error(codes.Internal, "")
-	}
-
-	return &proto.UploadPhotoReply{
-		UploadUrl: presignedRequest.URL,
-		Photo:     proto.DBPhotoToProtoPhoto(photo, o.server.config.PhotoUrlFormat),
-	}, nil
-}
-
 func newOutingsService(server *Server) *outingsService {
-	config := aws.Config{
-		Credentials: credentials.NewStaticCredentialsProvider(server.config.S3AccessKeyId, server.config.S3SecretAccessKey, ""),
-		EndpointResolver: aws.EndpointResolverFunc(func(service, region string) (aws.Endpoint, error) {
-			if service != "S3" {
-				return aws.Endpoint{}, fmt.Errorf("unsupported service: %s", service)
-			}
-
-			return aws.Endpoint{
-				PartitionID:       "aws",
-				URL:               server.config.S3Endpoint,
-				HostnameImmutable: true,
-			}, nil
-		}),
-	}
-	presignClient := s3.NewPresignClient(s3.NewFromConfig(config))
-
 	return &outingsService{
-		server:        server,
-		logger:        log.With().Str("service", "outings").Logger(),
-		presignClient: presignClient,
+		server: server,
+		logger: log.With().Str("service", "outings").Logger(),
 	}
 }

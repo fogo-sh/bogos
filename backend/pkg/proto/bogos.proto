@@ -44,14 +44,13 @@ message User {
 service Outings {
   rpc ListOutings (google.protobuf.Empty) returns (ListOutingsReply) {}
   rpc ListOutingUsers (ListOutingUsersRequest) returns (ListOutingUsersReply) {}
-  rpc ListOutingPhotos (ListOutingPhotosRequest) returns (ListOutingPhotosReply) {}
   rpc GetOuting (GetOutingRequest) returns (Outing) {}
+  rpc ListUserOutings (ListUserOutingsRequest) returns (ListUserOutingsReply) {}
 
   rpc CreateOuting (CreateOutingRequest) returns (Outing) {}
   rpc UpdateOuting (UpdateOutingRequest) returns (Outing) {}
   rpc AddUser (OutingAddUserRequest) returns (google.protobuf.Empty) {}
   rpc RemoveUser (OutingRemoveUserRequest) returns (google.protobuf.Empty) {}
-  rpc UploadPhoto (UploadPhotoRequest) returns (UploadPhotoReply) {}
 }
 
 message ListOutingsReply {
@@ -66,16 +65,16 @@ message ListOutingUsersReply {
   repeated User users = 1;
 }
 
-message ListOutingPhotosRequest {
-  int32 outing_id = 1;
-}
-
-message ListOutingPhotosReply {
-  repeated Photo photos = 1;
-}
-
 message GetOutingRequest {
   int32 outing_id = 1;
+}
+
+message ListUserOutingsRequest {
+  int32 user_id = 1;
+}
+
+message ListUserOutingsReply {
+  repeated Outing outings = 1;
 }
 
 message CreateOutingRequest {
@@ -103,6 +102,39 @@ message OutingRemoveUserRequest {
   int32 user_id = 2;
 }
 
+message Outing {
+  int32 id = 1;
+  string title = 2;
+  google.protobuf.Timestamp date = 3;
+
+  google.protobuf.Timestamp created_at = 4;
+  optional google.protobuf.Timestamp updated_at = 5;
+}
+
+service Photos {
+  rpc ListOutingPhotos (ListOutingPhotosRequest) returns (ListOutingPhotosReply) {}
+  rpc ListUserPhotos (ListUserPhotosRequest) returns (ListUserPhotosReply) {}
+
+  rpc UploadPhoto (UploadPhotoRequest) returns (UploadPhotoReply) {}
+  rpc DeletePhoto (DeletePhotoRequest) returns (google.protobuf.Empty) {}
+}
+
+message ListOutingPhotosRequest {
+  int32 outing_id = 1;
+}
+
+message ListOutingPhotosReply {
+  repeated Photo photos = 1;
+}
+
+message ListUserPhotosRequest {
+  int32 user_id = 1;
+}
+
+message ListUserPhotosReply {
+  repeated Photo photos = 1;
+}
+
 message UploadPhotoRequest {
   string extension = 1;
   int32 outing_id = 2;
@@ -113,13 +145,8 @@ message UploadPhotoReply {
   Photo photo = 2;
 }
 
-message Outing {
-  int32 id = 1;
-  string title = 2;
-  google.protobuf.Timestamp date = 3;
-
-  google.protobuf.Timestamp created_at = 4;
-  optional google.protobuf.Timestamp updated_at = 5;
+message DeletePhotoRequest {
+  int32 photo_id = 1;
 }
 
 message Photo {
