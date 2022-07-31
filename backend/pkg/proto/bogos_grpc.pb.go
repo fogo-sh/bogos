@@ -23,8 +23,9 @@ const _ = grpc.SupportPackageIsVersion7
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type UsersClient interface {
-	GetJwt(ctx context.Context, in *GetJwtRequest, opts ...grpc.CallOption) (*GetJwtReply, error)
 	GetCurrentUser(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*User, error)
+	GetUserByUsername(ctx context.Context, in *GetUserByUsernameRequest, opts ...grpc.CallOption) (*User, error)
+	GetJwt(ctx context.Context, in *GetJwtRequest, opts ...grpc.CallOption) (*GetJwtReply, error)
 	UpdateCurrentUser(ctx context.Context, in *UpdateCurrentUserRequest, opts ...grpc.CallOption) (*User, error)
 }
 
@@ -36,18 +37,27 @@ func NewUsersClient(cc grpc.ClientConnInterface) UsersClient {
 	return &usersClient{cc}
 }
 
-func (c *usersClient) GetJwt(ctx context.Context, in *GetJwtRequest, opts ...grpc.CallOption) (*GetJwtReply, error) {
-	out := new(GetJwtReply)
-	err := c.cc.Invoke(ctx, "/bogos.Users/GetJwt", in, out, opts...)
+func (c *usersClient) GetCurrentUser(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*User, error) {
+	out := new(User)
+	err := c.cc.Invoke(ctx, "/bogos.Users/GetCurrentUser", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *usersClient) GetCurrentUser(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*User, error) {
+func (c *usersClient) GetUserByUsername(ctx context.Context, in *GetUserByUsernameRequest, opts ...grpc.CallOption) (*User, error) {
 	out := new(User)
-	err := c.cc.Invoke(ctx, "/bogos.Users/GetCurrentUser", in, out, opts...)
+	err := c.cc.Invoke(ctx, "/bogos.Users/GetUserByUsername", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *usersClient) GetJwt(ctx context.Context, in *GetJwtRequest, opts ...grpc.CallOption) (*GetJwtReply, error) {
+	out := new(GetJwtReply)
+	err := c.cc.Invoke(ctx, "/bogos.Users/GetJwt", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -67,8 +77,9 @@ func (c *usersClient) UpdateCurrentUser(ctx context.Context, in *UpdateCurrentUs
 // All implementations must embed UnimplementedUsersServer
 // for forward compatibility
 type UsersServer interface {
-	GetJwt(context.Context, *GetJwtRequest) (*GetJwtReply, error)
 	GetCurrentUser(context.Context, *emptypb.Empty) (*User, error)
+	GetUserByUsername(context.Context, *GetUserByUsernameRequest) (*User, error)
+	GetJwt(context.Context, *GetJwtRequest) (*GetJwtReply, error)
 	UpdateCurrentUser(context.Context, *UpdateCurrentUserRequest) (*User, error)
 	mustEmbedUnimplementedUsersServer()
 }
@@ -77,11 +88,14 @@ type UsersServer interface {
 type UnimplementedUsersServer struct {
 }
 
-func (UnimplementedUsersServer) GetJwt(context.Context, *GetJwtRequest) (*GetJwtReply, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetJwt not implemented")
-}
 func (UnimplementedUsersServer) GetCurrentUser(context.Context, *emptypb.Empty) (*User, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetCurrentUser not implemented")
+}
+func (UnimplementedUsersServer) GetUserByUsername(context.Context, *GetUserByUsernameRequest) (*User, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetUserByUsername not implemented")
+}
+func (UnimplementedUsersServer) GetJwt(context.Context, *GetJwtRequest) (*GetJwtReply, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetJwt not implemented")
 }
 func (UnimplementedUsersServer) UpdateCurrentUser(context.Context, *UpdateCurrentUserRequest) (*User, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdateCurrentUser not implemented")
@@ -99,24 +113,6 @@ func RegisterUsersServer(s grpc.ServiceRegistrar, srv UsersServer) {
 	s.RegisterService(&Users_ServiceDesc, srv)
 }
 
-func _Users_GetJwt_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GetJwtRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(UsersServer).GetJwt(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/bogos.Users/GetJwt",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(UsersServer).GetJwt(ctx, req.(*GetJwtRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
 func _Users_GetCurrentUser_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(emptypb.Empty)
 	if err := dec(in); err != nil {
@@ -131,6 +127,42 @@ func _Users_GetCurrentUser_Handler(srv interface{}, ctx context.Context, dec fun
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(UsersServer).GetCurrentUser(ctx, req.(*emptypb.Empty))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Users_GetUserByUsername_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetUserByUsernameRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UsersServer).GetUserByUsername(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/bogos.Users/GetUserByUsername",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UsersServer).GetUserByUsername(ctx, req.(*GetUserByUsernameRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Users_GetJwt_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetJwtRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(UsersServer).GetJwt(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/bogos.Users/GetJwt",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(UsersServer).GetJwt(ctx, req.(*GetJwtRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -161,12 +193,16 @@ var Users_ServiceDesc = grpc.ServiceDesc{
 	HandlerType: (*UsersServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
-			MethodName: "GetJwt",
-			Handler:    _Users_GetJwt_Handler,
-		},
-		{
 			MethodName: "GetCurrentUser",
 			Handler:    _Users_GetCurrentUser_Handler,
+		},
+		{
+			MethodName: "GetUserByUsername",
+			Handler:    _Users_GetUserByUsername_Handler,
+		},
+		{
+			MethodName: "GetJwt",
+			Handler:    _Users_GetJwt_Handler,
 		},
 		{
 			MethodName: "UpdateCurrentUser",
