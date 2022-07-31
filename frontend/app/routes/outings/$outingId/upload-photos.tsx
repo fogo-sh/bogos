@@ -11,10 +11,13 @@ import {
 import React, { useEffect, useRef, useState } from "react";
 import invariant from "tiny-invariant";
 import { Modal } from "~/components/Modal";
-import { getOuting } from "~/utils/grpc.server";
-import type { Outing } from "~/utils/grpc.server";
-import { uploadPhoto } from "~/utils/grpc.server";
 import { getSessionDataFromRequest } from "~/utils/session.server";
+import type { Outing } from "~/proto/bogos";
+import {
+  genAuthMetadata,
+  outingsService,
+  photosService,
+} from "~/utils/grpc.server";
 
 type LoaderData = Outing;
 
@@ -22,7 +25,7 @@ export const loader: LoaderFunction = async ({ params }) => {
   const outingId = params.outingId;
   invariant(outingId, "outingId is required");
 
-  const outing = await getOuting(Number(outingId));
+  const outing = await outingsService.getOuting({ outingId: Number(outingId) });
 
   return json(outing);
 };
@@ -59,10 +62,12 @@ export const action: ActionFunction = async ({ request, params }) => {
     extensions.map(async (extension) => {
       let uploadPhotoReply;
       try {
-        uploadPhotoReply = await uploadPhoto(
-          sessionData.jwt,
-          extension,
-          Number(outingId)
+        uploadPhotoReply = await photosService.uploadPhoto(
+          {
+            extension,
+            outingId: Number(outingId),
+          },
+          { metadata: genAuthMetadata(sessionData.jwt) }
         );
       } catch (error) {
         console.error(error);

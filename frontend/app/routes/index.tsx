@@ -1,14 +1,14 @@
 import type { LoaderFunction } from "@remix-run/node";
 import { json } from "@remix-run/node";
 import { useLoaderData, Link } from "@remix-run/react";
-import type { Outing } from "~/utils/grpc.server";
 import { listOutings } from "~/utils/data.server";
+import type { EnrichedOuting } from "~/utils/data.server";
 import { PlusCircleIcon } from "@heroicons/react/solid";
 
-type LoaderData = Outing[];
+type LoaderData = EnrichedOuting[];
 
 export const loader: LoaderFunction = async () => {
-  const data = await listOutings();
+  const data: LoaderData = await listOutings();
   return json(data);
 };
 

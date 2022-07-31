@@ -4,7 +4,7 @@ import { ValidatedForm, validationError } from "remix-validated-form";
 import { z } from "zod";
 import { FormInput } from "~/components/form/FormInput";
 import { SubmitButton } from "~/components/form/SubmitButton";
-import { usersService } from "~/utils/grpc.server";
+import { genAuthMetadata, usersService } from "~/utils/grpc.server";
 import { createUserSession } from "~/utils/session.server";
 
 export const validator = withZod(
@@ -23,10 +23,22 @@ export const action: ActionFunction = async ({ request }) => {
 
   const { username, password } = data;
 
-  let jwt;
-
   try {
-    jwt = await usersService.getJwt(username, password);
+    const { jwt } = await usersService.getJwt({ username, password });
+    const currentUser = await usersService.getCurrentUser(
+      {},
+      { metadata: genAuthMetadata(jwt) }
+    );
+
+    return createUserSession(
+      {
+        jwt,
+        userId: currentUser.id,
+        username: currentUser.username,
+        avatarUrl: currentUser.avatarUrl,
+      },
+      "/"
+    );
   } catch (error) {
     console.error(error);
     return validationError(
@@ -39,18 +51,6 @@ export const action: ActionFunction = async ({ request }) => {
       data
     );
   }
-
-  const currentUser = await usersService.getCurrentUser(jwt);
-
-  return createUserSession(
-    {
-      jwt,
-      userId: currentUser.id,
-      username: currentUser.username,
-      avatarUrl: currentUser.avatarUrl,
-    },
-    "/"
-  );
 };
 
 export default function Login() {

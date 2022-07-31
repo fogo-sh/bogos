@@ -1,15 +1,30 @@
-import { outingsService } from "~/utils/grpc.server";
+import type { Outing, Photo, User } from "~/proto/bogos";
+import { outingsService, photosService } from "~/utils/grpc.server";
+
+export type EnrichedOuting = Outing & {
+  attendees: User[];
+  photos: Photo[];
+};
 
 export const listOutings = async () => {
-  const outings = await outingsService.listOutings();
+  const { outings } = await outingsService.listOutings({});
+
+  const enrichedOutings = [] as EnrichedOuting[];
 
   for (const outing of outings) {
-    const users = await outingsService.listOutingUsers(outing.id);
-    outing.attendees = users;
+    const { users: attendees } = await outingsService.listOutingUsers({
+      outingId: outing.id,
+    });
+    const { photos } = await photosService.listOutingPhotos({
+      outingId: outing.id,
+    });
 
-    const photos = await outingsService.listOutingPhotos(outing.id);
-    outing.photos = photos;
+    enrichedOutings.push({
+      ...outing,
+      attendees,
+      photos,
+    });
   }
 
-  return outings;
+  return enrichedOutings;
 };

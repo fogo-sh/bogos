@@ -11,8 +11,9 @@
     "dev:css": "npm run generate:css -- --watch",
     "dev:remix": "cross-env NODE_ENV=development remix dev",
     "generate:css": "npx tailwindcss -i ./styles/tailwind.css -o ./app/tailwind.css",
-    "generate:proto": "proto-loader-gen-types --grpcLib=@grpc/grpc-js --outDir=./app/proto/ ../backend/pkg/proto/*.proto",
-    "start": "cross-env NODE_ENV=production remix-serve build"
+    "generate:proto": "sh gen-proto.sh",
+    "start": "cross-env NODE_ENV=production remix-serve build",
+    "postinstall": "patch-package"
   },
   "prisma": {
     "seed": "node --require esbuild-register prisma/seed.ts"
@@ -28,6 +29,9 @@
     "@remix-validated-form/with-zod": "^2.0.1",
     "clsx": "^1.2.1",
     "mime-types": "^2.1.35",
+    "nice-grpc": "^1.2.1",
+    "patch-package": "^6.4.7",
+    "protobufjs": "^7.0.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "remix-validated-form": "^4.5.3",
@@ -38,13 +42,14 @@
   "devDependencies": {
     "@remix-run/dev": "^1.6.6",
     "@remix-run/eslint-config": "^1.6.6",
+    "@types/mime-types": "^2.1.1",
     "@types/react": "^18.0.15",
     "@types/react-dom": "^18.0.6",
-    "@types/mime-types": "^2.1.1",
     "@vitejs/plugin-react": "^2.0.0",
     "cross-env": "^7.0.3",
     "esbuild-register": "^3.3.3",
     "eslint": "^8.20.0",
+    "grpc-tools": "^1.11.2",
     "npm-run-all": "^4.1.5",
     "tailwindcss": "^3.1.7",
     "ts-proto": "^1.121.1",

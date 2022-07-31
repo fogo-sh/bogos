@@ -1,11 +1,11 @@
 import type { ActionFunction } from "@remix-run/node";
-import { redirect, json } from "@remix-run/node";
+import { redirect } from "@remix-run/node";
 import { withZod } from "@remix-validated-form/with-zod";
 import { ValidatedForm, validationError } from "remix-validated-form";
 import { z } from "zod";
 import { FormInput } from "~/components/form/FormInput";
 import { SubmitButton } from "~/components/form/SubmitButton";
-import { outingsService } from "~/utils/grpc.server";
+import { genAuthMetadata, outingsService } from "~/utils/grpc.server";
 import { getSessionDataFromRequest } from "~/utils/session.server";
 
 export const validator = withZod(
@@ -34,18 +34,15 @@ export const action: ActionFunction = async ({ request }) => {
 
   const { title, date } = data;
 
-  let outing;
-
-  try {
-    outing = await outingsService.createOuting(sessionData.jwt, title, date);
-  } catch (error) {
-    console.error(error);
-    return json({ error: "Outing creation failed" });
-  }
+  const outing = await outingsService.createOuting(
+    { title, date },
+    { metadata: genAuthMetadata(sessionData.jwt) }
+  );
 
   return redirect(`/outings/${outing.id}`);
 };
 
+// TODO make a modal instead of its own page
 export default function NewOuting() {
   return (
     <main className="flex flex-col gap-y-10 max-w-[20rem] mx-auto">
