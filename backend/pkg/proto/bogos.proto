@@ -7,9 +7,15 @@ import "google/protobuf/empty.proto";
 option go_package = "github.com/fogo-sh/bogos/backend/pkg/proto";
 
 service Users {
-  rpc GetJwt (GetJwtRequest) returns (GetJwtReply) {}
   rpc GetCurrentUser (google.protobuf.Empty) returns (User) {}
+  rpc GetUserByUsername (GetUserByUsernameRequest) returns (User) {}
+
+  rpc GetJwt (GetJwtRequest) returns (GetJwtReply) {}
   rpc UpdateCurrentUser (UpdateCurrentUserRequest) returns (User) {}
+}
+
+message GetUserByUsernameRequest {
+  string username = 1;
 }
 
 message GetJwtRequest {

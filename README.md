@@ -22,7 +22,11 @@ _work in progress_
 
 ### Backend
 
-TODO
+- `cd ./backend`
+- Create testing user
+  - `go run . create user`
+- Start backend
+  - `go run . run`
 
 ### Frontend
 

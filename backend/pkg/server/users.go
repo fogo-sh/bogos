@@ -26,6 +26,19 @@ type usersService struct {
 	proto.UnimplementedUsersServer
 }
 
+func (u *usersService) GetUserByUsername(ctx context.Context, request *proto.GetUserByUsernameRequest) (*proto.User, error) {
+	user, err := u.server.db.GetUserByUsername(ctx, request.GetUsername())
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return nil, status.Error(codes.NotFound, "no user could be found with that username")
+		}
+		u.logger.Error().Err(err).Str("operation", "GetUserByUsername").Msg("Error fetching user")
+		return nil, status.Error(codes.Internal, "")
+	}
+
+	return proto.DBUserToProtoUser(user), nil
+}
+
 func (u *usersService) GetJwt(ctx context.Context, request *proto.GetJwtRequest) (*proto.GetJwtReply, error) {
 	u.logger.Info().Str("method", "GetJwt").Msg("Begin request.")
 
