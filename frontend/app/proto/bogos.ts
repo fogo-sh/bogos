@@ -6,6 +6,10 @@ import * as _m0 from "protobufjs/minimal";
 
 export const protobufPackage = "bogos";
 
+export interface GetUserByUsernameRequest {
+  username: string;
+}
+
 export interface GetJwtRequest {
   username: string;
   password: string;
@@ -125,6 +129,63 @@ export interface Photo {
   createdAt: Date | undefined;
   updatedAt?: Date | undefined;
 }
+
+function createBaseGetUserByUsernameRequest(): GetUserByUsernameRequest {
+  return { username: "" };
+}
+
+export const GetUserByUsernameRequest = {
+  encode(
+    message: GetUserByUsernameRequest,
+    writer: _m0.Writer = _m0.Writer.create()
+  ): _m0.Writer {
+    if (message.username !== "") {
+      writer.uint32(10).string(message.username);
+    }
+    return writer;
+  },
+
+  decode(
+    input: _m0.Reader | Uint8Array,
+    length?: number
+  ): GetUserByUsernameRequest {
+    const reader = input instanceof _m0.Reader ? input : new _m0.Reader(input);
+    let end = length === undefined ? reader.len : reader.pos + length;
+    const message = createBaseGetUserByUsernameRequest();
+    while (reader.pos < end) {
+      const tag = reader.uint32();
+      switch (tag >>> 3) {
+        case 1:
+          message.username = reader.string();
+          break;
+        default:
+          reader.skipType(tag & 7);
+          break;
+      }
+    }
+    return message;
+  },
+
+  fromJSON(object: any): GetUserByUsernameRequest {
+    return {
+      username: isSet(object.username) ? String(object.username) : "",
+    };
+  },
+
+  toJSON(message: GetUserByUsernameRequest): unknown {
+    const obj: any = {};
+    message.username !== undefined && (obj.username = message.username);
+    return obj;
+  },
+
+  fromPartial(
+    object: DeepPartial<GetUserByUsernameRequest>
+  ): GetUserByUsernameRequest {
+    const message = createBaseGetUserByUsernameRequest();
+    message.username = object.username ?? "";
+    return message;
+  },
+};
 
 function createBaseGetJwtRequest(): GetJwtRequest {
   return { username: "", password: "" };
@@ -1776,19 +1837,27 @@ export const UsersDefinition = {
   name: "Users",
   fullName: "bogos.Users",
   methods: {
-    getJwt: {
-      name: "GetJwt",
-      requestType: GetJwtRequest,
-      requestStream: false,
-      responseType: GetJwtReply,
-      responseStream: false,
-      options: {},
-    },
     getCurrentUser: {
       name: "GetCurrentUser",
       requestType: Empty,
       requestStream: false,
       responseType: User,
+      responseStream: false,
+      options: {},
+    },
+    getUserByUsername: {
+      name: "GetUserByUsername",
+      requestType: GetUserByUsernameRequest,
+      requestStream: false,
+      responseType: User,
+      responseStream: false,
+      options: {},
+    },
+    getJwt: {
+      name: "GetJwt",
+      requestType: GetJwtRequest,
+      requestStream: false,
+      responseType: GetJwtReply,
       responseStream: false,
       options: {},
     },
@@ -1804,14 +1873,18 @@ export const UsersDefinition = {
 } as const;
 
 export interface UsersServiceImplementation<CallContextExt = {}> {
-  getJwt(
-    request: GetJwtRequest,
-    context: CallContext & CallContextExt
-  ): Promise<DeepPartial<GetJwtReply>>;
   getCurrentUser(
     request: Empty,
     context: CallContext & CallContextExt
   ): Promise<DeepPartial<User>>;
+  getUserByUsername(
+    request: GetUserByUsernameRequest,
+    context: CallContext & CallContextExt
+  ): Promise<DeepPartial<User>>;
+  getJwt(
+    request: GetJwtRequest,
+    context: CallContext & CallContextExt
+  ): Promise<DeepPartial<GetJwtReply>>;
   updateCurrentUser(
     request: UpdateCurrentUserRequest,
     context: CallContext & CallContextExt
@@ -1819,14 +1892,18 @@ export interface UsersServiceImplementation<CallContextExt = {}> {
 }
 
 export interface UsersClient<CallOptionsExt = {}> {
-  getJwt(
-    request: DeepPartial<GetJwtRequest>,
-    options?: CallOptions & CallOptionsExt
-  ): Promise<GetJwtReply>;
   getCurrentUser(
     request: DeepPartial<Empty>,
     options?: CallOptions & CallOptionsExt
   ): Promise<User>;
+  getUserByUsername(
+    request: DeepPartial<GetUserByUsernameRequest>,
+    options?: CallOptions & CallOptionsExt
+  ): Promise<User>;
+  getJwt(
+    request: DeepPartial<GetJwtRequest>,
+    options?: CallOptions & CallOptionsExt
+  ): Promise<GetJwtReply>;
   updateCurrentUser(
     request: DeepPartial<UpdateCurrentUserRequest>,
     options?: CallOptions & CallOptionsExt

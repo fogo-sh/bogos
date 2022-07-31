@@ -141,7 +141,7 @@ export default function UploadPhoto() {
     <Modal
       title={`Upload photos to '${outing.title}'`}
       onClose={() => {
-        navigate(`/outings/${outingId}`);
+        navigate(`/outing/${outingId}`);
       }}
     >
       <input

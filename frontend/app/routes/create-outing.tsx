@@ -39,7 +39,7 @@ export const action: ActionFunction = async ({ request }) => {
     { metadata: genAuthMetadata(sessionData.jwt) }
   );
 
-  return redirect(`/outings/${outing.id}`);
+  return redirect(`/outing/${outing.id}`);
 };
 
 // TODO make a modal instead of its own page

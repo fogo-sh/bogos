@@ -74,7 +74,7 @@ export default function OutingPage() {
           <div className="flex flex-wrap gap-4">
             {photos.length === 0 && (
               <p className="text-stone-300 italic text-center opacity-70">
-                No photos
+                no photos
               </p>
             )}
             {photos.map((photo) => (

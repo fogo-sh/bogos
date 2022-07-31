@@ -12,7 +12,7 @@ function LoginDropdown({ username }: { username: string }) {
         <Menu.Item>
           {({ active }) => (
             <Link
-              to="/profile"
+              to={`/profile/${username}`}
               className={`${active && "bg-stone-700"} py-1 px-3`}
             >
               profile

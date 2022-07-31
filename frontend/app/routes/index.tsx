@@ -33,7 +33,7 @@ export default function Index() {
           className="flex flex-col gap-y-4 my-4 first-of-type:mt-4"
         >
           <div className="flex items-center gap-4">
-            <Link to={`/outings/${outing.id}`}>
+            <Link to={`/outing/${outing.id}`}>
               <h1 className="text-stone-300 text-3xl underline hover:text-stone-50">
                 {outing.title}
               </h1>
