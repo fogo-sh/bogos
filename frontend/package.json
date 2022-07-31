@@ -12,8 +12,7 @@
     "dev:remix": "cross-env NODE_ENV=development remix dev",
     "generate:css": "npx tailwindcss -i ./styles/tailwind.css -o ./app/tailwind.css",
     "generate:proto": "sh gen-proto.sh",
-    "start": "cross-env NODE_ENV=production remix-serve build",
-    "postinstall": "patch-package"
+    "start": "cross-env NODE_ENV=production remix-serve build"
   },
   "prisma": {
     "seed": "node --require esbuild-register prisma/seed.ts"
@@ -30,7 +29,6 @@
     "clsx": "^1.2.1",
     "mime-types": "^2.1.35",
     "nice-grpc": "^1.2.1",
-    "patch-package": "^6.4.7",
     "protobufjs": "^7.0.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",

@@ -6,6 +6,8 @@ _work in progress_
 
 ## Setup (development)
 
+### Services
+
 - Install the dependencies:
   - [kind](https://kind.sigs.k8s.io/docs/user/quick-start#installation)
   - [kubectl](https://kubernetes.io/docs/tasks/tools/#kubectl)
@@ -17,3 +19,18 @@ _work in progress_
 - Start up everything
   - `tilt up`
 - Once started, click the "Upgrade DB" button on the postgresql pod to apply database migrations
+
+### Backend
+
+TODO
+
+### Frontend
+
+- Enter dir
+  - `cd ./frontend`
+- Install deps.
+  - `npm install`
+- Run Remix app in development mode:
+  - `npm run dev`
+- Run Remix app in production mode:
+  - `npm run start`
