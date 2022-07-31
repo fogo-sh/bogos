@@ -30,8 +30,7 @@ _work in progress_
 
 ### Frontend
 
-- Enter dir
-  - `cd ./frontend`
+- `cd ./frontend`
 - Install deps.
   - `npm install`
 - Run Remix app in development mode:
