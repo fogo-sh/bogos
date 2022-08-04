@@ -2,10 +2,16 @@ import type { LoaderFunction } from "@remix-run/node";
 import { json } from "@remix-run/node";
 import { Link, Outlet, useLoaderData } from "@remix-run/react";
 import invariant from "tiny-invariant";
-import { PhotographIcon } from "@heroicons/react/solid";
+import {
+  PencilAltIcon,
+  PhotographIcon,
+  TrashIcon,
+} from "@heroicons/react/solid";
 import { getSessionDataFromRequest } from "~/utils/session.server";
 import { outingsService, photosService } from "~/utils/grpc.server";
 import type { Outing, Photo, User } from "~/proto/bogos";
+import React, { useState } from "react";
+import clsx from "clsx";
 
 type LoaderData = {
   outing: Outing;
@@ -46,6 +52,8 @@ export const loader: LoaderFunction = async ({ request, params }) => {
 export default function OutingPage() {
   const { outing, attendees, photos, isLoggedIn } = useLoaderData<LoaderData>();
 
+  const [isEditing, setIsEditing] = useState(false);
+
   return (
     <>
       <main className="flex flex-col gap-y-10">
@@ -64,12 +72,23 @@ export default function OutingPage() {
             ))}
           </div>
           {isLoggedIn && (
-            <Link to="./upload-photos">
-              <button className="button">
-                <PhotographIcon className="text-stone-100 h-4 w-4" />
-                upload photos
+            <div className="flex gap-x-4">
+              {!isEditing && (
+                <Link to="./upload-photos">
+                  <button className="button">
+                    <PhotographIcon className="text-stone-100 h-4 w-4" />
+                    upload photos
+                  </button>
+                </Link>
+              )}
+              <button
+                className="button"
+                onClick={() => setIsEditing(!isEditing)}
+              >
+                <PencilAltIcon className="text-stone-100 h-4 w-4" />
+                {isEditing ? "stop editing" : "edit outing"}
               </button>
-            </Link>
+            </div>
           )}
           <div className="flex flex-wrap gap-4">
             {photos.length === 0 && (
@@ -78,12 +97,27 @@ export default function OutingPage() {
               </p>
             )}
             {photos.map((photo) => (
-              <img
-                key={photo.id}
-                src={photo.url}
-                alt={photo.title}
-                className="h-64 w-64 object-cover"
-              />
+              <React.Fragment key={photo.id}>
+                {isEditing ? (
+                  <div className="flex flex-col gap-y-2">
+                    <button className="button">
+                      <TrashIcon className="text-stone-100 h-4 w-4" />
+                      delete
+                    </button>
+                    <img
+                      src={photo.url}
+                      alt={photo.title}
+                      className="h-64 w-64 object-cover"
+                    />
+                  </div>
+                ) : (
+                  <img
+                    src={photo.url}
+                    alt={photo.title}
+                    className="h-64 w-64 object-cover"
+                  />
+                )}
+              </React.Fragment>
             ))}
           </div>
         </div>
