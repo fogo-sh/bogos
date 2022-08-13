@@ -153,6 +153,41 @@ func (p *photosService) DeletePhoto(ctx context.Context, request *proto.DeletePh
 	return &emptypb.Empty{}, nil
 }
 
+func (p *photosService) UpdatePhoto(ctx context.Context, request *proto.UpdatePhotoRequest) (*proto.Photo, error) {
+	_, err := p.server.authorize(ctx)
+	if err != nil {
+		return nil, err
+	}
+
+	currentPhoto, err := p.server.db.GetPhoto(ctx, request.PhotoId)
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return nil, status.Error(codes.NotFound, "no photo with that ID found")
+		} else {
+			p.logger.Error().Str("operation", "UpdatePhoto").Err(err).Msg("Error getting current photo")
+			return nil, status.Error(codes.Internal, "")
+		}
+	}
+
+	updateParams := database.UpdatePhotoParams{
+		ID: request.PhotoId,
+	}
+
+	if request.UpdateTitle {
+		updateParams.Title = database.PtrToNullString(request.Title)
+	} else {
+		updateParams.Title = currentPhoto.Title
+	}
+
+	newPhoto, err := p.server.db.UpdatePhoto(ctx, updateParams)
+	if err != nil {
+		p.logger.Error().Str("operation", "UpdatePhoto").Err(err).Msg("Error updating photo")
+		return nil, status.Error(codes.Internal, "")
+	}
+
+	return proto.DBPhotoToProtoPhoto(newPhoto, p.server.config.PhotoUrlFormat), nil
+}
+
 func newPhotosService(server *Server) *photosService {
 	config := aws.Config{
 		Credentials: credentials.NewStaticCredentialsProvider(server.config.S3AccessKeyId, server.config.S3SecretAccessKey, ""),
