@@ -72,6 +72,27 @@ func (q *Queries) GetOuting(ctx context.Context, id int32) (Outing, error) {
 	return i, err
 }
 
+const getOutingBySlug = `-- name: GetOutingBySlug :one
+SELECT id, title, date, created_at, updated_at, slug
+from outings
+WHERE slug = $1
+LIMIT 1
+`
+
+func (q *Queries) GetOutingBySlug(ctx context.Context, slug string) (Outing, error) {
+	row := q.db.QueryRowContext(ctx, getOutingBySlug, slug)
+	var i Outing
+	err := row.Scan(
+		&i.ID,
+		&i.Title,
+		&i.Date,
+		&i.CreatedAt,
+		&i.UpdatedAt,
+		&i.Slug,
+	)
+	return i, err
+}
+
 const listOutings = `-- name: ListOutings :many
 SELECT id, title, date, created_at, updated_at, slug
 from outings

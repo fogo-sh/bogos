@@ -220,6 +220,7 @@ type OutingsClient interface {
 	ListOutings(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*ListOutingsReply, error)
 	ListOutingUsers(ctx context.Context, in *ListOutingUsersRequest, opts ...grpc.CallOption) (*ListOutingUsersReply, error)
 	GetOuting(ctx context.Context, in *GetOutingRequest, opts ...grpc.CallOption) (*Outing, error)
+	GetOutingBySlug(ctx context.Context, in *GetOutingBySlugRequest, opts ...grpc.CallOption) (*Outing, error)
 	ListUserOutings(ctx context.Context, in *ListUserOutingsRequest, opts ...grpc.CallOption) (*ListUserOutingsReply, error)
 	CreateOuting(ctx context.Context, in *CreateOutingRequest, opts ...grpc.CallOption) (*Outing, error)
 	UpdateOuting(ctx context.Context, in *UpdateOutingRequest, opts ...grpc.CallOption) (*Outing, error)
@@ -256,6 +257,15 @@ func (c *outingsClient) ListOutingUsers(ctx context.Context, in *ListOutingUsers
 func (c *outingsClient) GetOuting(ctx context.Context, in *GetOutingRequest, opts ...grpc.CallOption) (*Outing, error) {
 	out := new(Outing)
 	err := c.cc.Invoke(ctx, "/bogos.Outings/GetOuting", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *outingsClient) GetOutingBySlug(ctx context.Context, in *GetOutingBySlugRequest, opts ...grpc.CallOption) (*Outing, error) {
+	out := new(Outing)
+	err := c.cc.Invoke(ctx, "/bogos.Outings/GetOutingBySlug", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -314,6 +324,7 @@ type OutingsServer interface {
 	ListOutings(context.Context, *emptypb.Empty) (*ListOutingsReply, error)
 	ListOutingUsers(context.Context, *ListOutingUsersRequest) (*ListOutingUsersReply, error)
 	GetOuting(context.Context, *GetOutingRequest) (*Outing, error)
+	GetOutingBySlug(context.Context, *GetOutingBySlugRequest) (*Outing, error)
 	ListUserOutings(context.Context, *ListUserOutingsRequest) (*ListUserOutingsReply, error)
 	CreateOuting(context.Context, *CreateOutingRequest) (*Outing, error)
 	UpdateOuting(context.Context, *UpdateOutingRequest) (*Outing, error)
@@ -334,6 +345,9 @@ func (UnimplementedOutingsServer) ListOutingUsers(context.Context, *ListOutingUs
 }
 func (UnimplementedOutingsServer) GetOuting(context.Context, *GetOutingRequest) (*Outing, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetOuting not implemented")
+}
+func (UnimplementedOutingsServer) GetOutingBySlug(context.Context, *GetOutingBySlugRequest) (*Outing, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetOutingBySlug not implemented")
 }
 func (UnimplementedOutingsServer) ListUserOutings(context.Context, *ListUserOutingsRequest) (*ListUserOutingsReply, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ListUserOutings not implemented")
@@ -413,6 +427,24 @@ func _Outings_GetOuting_Handler(srv interface{}, ctx context.Context, dec func(i
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(OutingsServer).GetOuting(ctx, req.(*GetOutingRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _Outings_GetOutingBySlug_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetOutingBySlugRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(OutingsServer).GetOutingBySlug(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/bogos.Outings/GetOutingBySlug",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(OutingsServer).GetOutingBySlug(ctx, req.(*GetOutingBySlugRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -525,6 +557,10 @@ var Outings_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetOuting",
 			Handler:    _Outings_GetOuting_Handler,
+		},
+		{
+			MethodName: "GetOutingBySlug",
+			Handler:    _Outings_GetOutingBySlug_Handler,
 		},
 		{
 			MethodName: "ListUserOutings",

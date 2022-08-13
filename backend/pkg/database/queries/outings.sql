@@ -9,6 +9,12 @@ from outings
 WHERE id = $1
 LIMIT 1;
 
+-- name: GetOutingBySlug :one
+SELECT *
+from outings
+WHERE slug = $1
+LIMIT 1;
+
 -- name: ListOutings :many
 SELECT *
 from outings;

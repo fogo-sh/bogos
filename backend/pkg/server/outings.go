@@ -143,6 +143,20 @@ func (o *outingsService) GetOuting(ctx context.Context, request *proto.GetOuting
 	return proto.DBOutingToProtoOuting(outing), nil
 }
 
+func (o *outingsService) GetOutingBySlug(ctx context.Context, request *proto.GetOutingBySlugRequest) (*proto.Outing, error) {
+	outing, err := o.server.db.GetOutingBySlug(ctx, request.Slug)
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return nil, status.Error(codes.NotFound, "no outing with that slug found")
+		} else {
+			o.logger.Error().Str("operation", "GetOuting").Err(err).Msg("Error getting outing")
+			return nil, status.Error(codes.Internal, "")
+		}
+	}
+
+	return proto.DBOutingToProtoOuting(outing), nil
+}
+
 func (o *outingsService) ListUserOutings(ctx context.Context, request *proto.ListUserOutingsRequest) (*proto.ListUserOutingsReply, error) {
 	var resp []*proto.Outing
 
