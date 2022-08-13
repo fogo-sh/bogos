@@ -4,7 +4,9 @@ import (
 	"context"
 	"database/sql"
 	"errors"
+	"fmt"
 
+	"github.com/gosimple/slug"
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
 	"google.golang.org/grpc/codes"
@@ -28,9 +30,17 @@ func (o *outingsService) CreateOuting(ctx context.Context, request *proto.Create
 		return nil, err
 	}
 
+	slugTitle := fmt.Sprintf(
+		"%s %s",
+		request.GetTitle(),
+		// Include date in slug, to reduce likelihood of a slug conflict
+		request.GetDate().AsTime().Format("2006-01-02"),
+	)
+
 	outing, err := o.server.db.CreateOuting(ctx, database.CreateOutingParams{
 		Title: request.GetTitle(),
 		Date:  request.GetDate().AsTime(),
+		Slug:  slug.Make(slugTitle),
 	})
 	if err != nil {
 		o.logger.Error().Str("operation", "CreateOuting").Err(err).Msg("Error creating outing")
@@ -124,6 +134,20 @@ func (o *outingsService) GetOuting(ctx context.Context, request *proto.GetOuting
 	if err != nil {
 		if errors.Is(err, sql.ErrNoRows) {
 			return nil, status.Error(codes.NotFound, "no outing with that ID found")
+		} else {
+			o.logger.Error().Str("operation", "GetOuting").Err(err).Msg("Error getting outing")
+			return nil, status.Error(codes.Internal, "")
+		}
+	}
+
+	return proto.DBOutingToProtoOuting(outing), nil
+}
+
+func (o *outingsService) GetOutingBySlug(ctx context.Context, request *proto.GetOutingBySlugRequest) (*proto.Outing, error) {
+	outing, err := o.server.db.GetOutingBySlug(ctx, request.Slug)
+	if err != nil {
+		if errors.Is(err, sql.ErrNoRows) {
+			return nil, status.Error(codes.NotFound, "no outing with that slug found")
 		} else {
 			o.logger.Error().Str("operation", "GetOuting").Err(err).Msg("Error getting outing")
 			return nil, status.Error(codes.Internal, "")

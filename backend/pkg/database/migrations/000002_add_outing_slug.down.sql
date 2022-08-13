@@ -1,0 +1,6 @@
+BEGIN;
+
+ALTER TABLE outings
+    DROP COLUMN IF EXISTS slug;
+
+COMMIT;
