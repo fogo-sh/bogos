@@ -150,6 +150,7 @@ message ListUserPhotosReply {
 message UploadPhotoRequest {
   string extension = 1;
   int32 outing_id = 2;
+  optional string title = 3;
 }
 
 message UploadPhotoReply {

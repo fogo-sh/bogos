@@ -104,6 +104,7 @@ func (p *photosService) UploadPhoto(ctx context.Context, request *proto.UploadPh
 		Path:      photoPath,
 		CreatorID: currentUser.ID,
 		OutingID:  request.OutingId,
+		Title:     database.PtrToNullString(request.Title),
 	})
 	if err != nil {
 		p.logger.Error().Err(err).Str("operation", "UploadPhoto").Msg("Error inserting new photo")
