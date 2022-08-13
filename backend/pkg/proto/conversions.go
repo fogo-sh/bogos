@@ -26,6 +26,7 @@ func DBOutingToProtoOuting(outing database.Outing) *Outing {
 		Date:      timestamppb.New(outing.Date),
 		CreatedAt: timestamppb.New(outing.CreatedAt),
 		UpdatedAt: database.NullTimeToTimestamppb(outing.UpdatedAt),
+		Slug:      outing.Slug,
 	}
 }
 

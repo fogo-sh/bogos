@@ -112,6 +112,7 @@ message Outing {
   int32 id = 1;
   string title = 2;
   google.protobuf.Timestamp date = 3;
+  string slug = 6;
 
   google.protobuf.Timestamp created_at = 4;
   optional google.protobuf.Timestamp updated_at = 5;
