@@ -26,18 +26,19 @@ func (q *Queries) AddUserToOuting(ctx context.Context, arg AddUserToOutingParams
 }
 
 const createOuting = `-- name: CreateOuting :one
-INSERT INTO outings (title, date)
-VALUES ($1, $2)
+INSERT INTO outings (title, date, slug)
+VALUES ($1, $2, $3)
 RETURNING id, title, date, created_at, updated_at, slug
 `
 
 type CreateOutingParams struct {
 	Title string
 	Date  time.Time
+	Slug  string
 }
 
 func (q *Queries) CreateOuting(ctx context.Context, arg CreateOutingParams) (Outing, error) {
-	row := q.db.QueryRowContext(ctx, createOuting, arg.Title, arg.Date)
+	row := q.db.QueryRowContext(ctx, createOuting, arg.Title, arg.Date, arg.Slug)
 	var i Outing
 	err := row.Scan(
 		&i.ID,

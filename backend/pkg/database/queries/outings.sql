@@ -1,6 +1,6 @@
 -- name: CreateOuting :one
-INSERT INTO outings (title, date)
-VALUES ($1, $2)
+INSERT INTO outings (title, date, slug)
+VALUES ($1, $2, $3)
 RETURNING *;
 
 -- name: GetOuting :one

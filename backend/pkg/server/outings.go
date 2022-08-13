@@ -4,7 +4,9 @@ import (
 	"context"
 	"database/sql"
 	"errors"
+	"fmt"
 
+	"github.com/gosimple/slug"
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
 	"google.golang.org/grpc/codes"
@@ -28,9 +30,17 @@ func (o *outingsService) CreateOuting(ctx context.Context, request *proto.Create
 		return nil, err
 	}
 
+	slugTitle := fmt.Sprintf(
+		"%s %s",
+		request.GetTitle(),
+		// Include date in slug, to reduce likelihood of a slug conflict
+		request.GetDate().AsTime().Format("2006-01-02"),
+	)
+
 	outing, err := o.server.db.CreateOuting(ctx, database.CreateOutingParams{
 		Title: request.GetTitle(),
 		Date:  request.GetDate().AsTime(),
+		Slug:  slug.Make(slugTitle),
 	})
 	if err != nil {
 		o.logger.Error().Str("operation", "CreateOuting").Err(err).Msg("Error creating outing")
