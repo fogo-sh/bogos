@@ -595,6 +595,7 @@ type PhotosClient interface {
 	ListUserPhotos(ctx context.Context, in *ListUserPhotosRequest, opts ...grpc.CallOption) (*ListUserPhotosReply, error)
 	UploadPhoto(ctx context.Context, in *UploadPhotoRequest, opts ...grpc.CallOption) (*UploadPhotoReply, error)
 	DeletePhoto(ctx context.Context, in *DeletePhotoRequest, opts ...grpc.CallOption) (*emptypb.Empty, error)
+	UpdatePhoto(ctx context.Context, in *UpdatePhotoRequest, opts ...grpc.CallOption) (*Photo, error)
 }
 
 type photosClient struct {
@@ -641,6 +642,15 @@ func (c *photosClient) DeletePhoto(ctx context.Context, in *DeletePhotoRequest, 
 	return out, nil
 }
 
+func (c *photosClient) UpdatePhoto(ctx context.Context, in *UpdatePhotoRequest, opts ...grpc.CallOption) (*Photo, error) {
+	out := new(Photo)
+	err := c.cc.Invoke(ctx, "/bogos.Photos/UpdatePhoto", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // PhotosServer is the server API for Photos service.
 // All implementations must embed UnimplementedPhotosServer
 // for forward compatibility
@@ -649,6 +659,7 @@ type PhotosServer interface {
 	ListUserPhotos(context.Context, *ListUserPhotosRequest) (*ListUserPhotosReply, error)
 	UploadPhoto(context.Context, *UploadPhotoRequest) (*UploadPhotoReply, error)
 	DeletePhoto(context.Context, *DeletePhotoRequest) (*emptypb.Empty, error)
+	UpdatePhoto(context.Context, *UpdatePhotoRequest) (*Photo, error)
 	mustEmbedUnimplementedPhotosServer()
 }
 
@@ -667,6 +678,9 @@ func (UnimplementedPhotosServer) UploadPhoto(context.Context, *UploadPhotoReques
 }
 func (UnimplementedPhotosServer) DeletePhoto(context.Context, *DeletePhotoRequest) (*emptypb.Empty, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeletePhoto not implemented")
+}
+func (UnimplementedPhotosServer) UpdatePhoto(context.Context, *UpdatePhotoRequest) (*Photo, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdatePhoto not implemented")
 }
 func (UnimplementedPhotosServer) mustEmbedUnimplementedPhotosServer() {}
 
@@ -753,6 +767,24 @@ func _Photos_DeletePhoto_Handler(srv interface{}, ctx context.Context, dec func(
 	return interceptor(ctx, in, info, handler)
 }
 
+func _Photos_UpdatePhoto_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdatePhotoRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(PhotosServer).UpdatePhoto(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/bogos.Photos/UpdatePhoto",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(PhotosServer).UpdatePhoto(ctx, req.(*UpdatePhotoRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // Photos_ServiceDesc is the grpc.ServiceDesc for Photos service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -775,6 +807,10 @@ var Photos_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "DeletePhoto",
 			Handler:    _Photos_DeletePhoto_Handler,
+		},
+		{
+			MethodName: "UpdatePhoto",
+			Handler:    _Photos_UpdatePhoto_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},
